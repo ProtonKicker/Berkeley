@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math 54 UC Berkeley Mind Map</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 40px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 20px;
+        }
+        h1 {
+            color: #1e3a8a;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #1e40af;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 8px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        h3 {
+             color: #334155;
+             margin-top: 20px;
+        }
+        p {
+            color: #64748b;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #334155;
+            margin-bottom: 10px;
+            margin-top: 30px;
+        }
+        ul.content-list {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+        ul.content-list li {
+            margin-bottom: 6px;
+            color: #475569;
+        }
+        ul.content-list > li {
+            font-weight: 600;
+            color: #1e3a8a;
+            margin-top: 15px;
+        }
+        ul.content-list > li > ul {
+            font-weight: normal;
+            list-style-type: circle;
+            margin-top: 5px;
+        }
+        .list-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        @media (max-width: 768px) {
+            .list-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="text-3xl font-bold">Math 54 Course Mind Map</h1>
+        <p>Based on <i>Linear Algebra & Differential Equations (Custom Edition for UCB)</i></p>
+        <p class="text-sm mt-2"><b>Note:</b> Syllabus varies slightly by professor (e.g., Paulin, Stankova, Srivastava), but these are the core topics.</p>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="dot" style="background:#dbeafe; border:1px solid #2563eb"></div><span>Linear Algebra (Lay)</span></div>
+        <div class="legend-item"><div class="dot" style="background:#fce7f3; border:1px solid #db2777"></div><span>Differential Equations (Nagle)</span></div>
+        <div class="legend-item"><div class="dot" style="background:#dcfce7; border:1px solid #16a34a"></div><span>Key Applications</span></div>
+    </div>
+
+    <!-- Mind Map 1: Linear Algebra -->
+    <div class="section-title">Part 1: Linear Algebra (The Lay Textbook)</div>
+    <div class="mermaid">
+        mindmap
+          root((PART 1))
+              [Ch 1: Linear Equations]
+                Row Reduction & Echelon Forms
+                Vector & Matrix Equations
+                Linear Independence
+                Linear Transformations
+                  ::icon(fa fa-bolt)
+                  One-to-One vs Onto
+                  Matrix of a Transformation
+              [Ch 2: Matrix Algebra]
+                Matrix Operations
+                Inverse Matrices
+                Invertible Matrix Theorem
+                  ::icon(fa fa-exclamation-circle)
+                Subspaces & Dimension
+              [Ch 3: Determinants]
+                Properties & Computation
+                Cramers Rule
+                Geometric Interpretation
+              [Ch 4: Vector Spaces]
+                Subspaces
+                  Null Space
+                  Column Space
+                Bases & Coordinate Systems
+                Dimension & Rank
+                Change of Basis
+                  ::icon(fa fa-exchange)
+              [Ch 5: Eigen Theory]
+                Eigenvalues & Eigenvectors
+                Characteristic Equation
+                Diagonalization
+                Complex Eigenvalues
+                  ::icon(fa fa-cube)
+              [Ch 6: Orthogonality]
+                Inner Product & Dot Product
+                Orthogonal Projections
+                Gram-Schmidt Process
+                Least-Squares Problems
+                  ::icon(fa fa-chart-line)
+              [Ch 7: Symmetric Matrices]
+                Spectral Theorem
+                Quadratic Forms
+                SVD Singular Value Decomposition
+                  ::icon(fa fa-star)
+    </div>
+
+    <!-- Mind Map 2: Differential Equations -->
+    <div class="section-title">Part 2: Differential Equations (The Nagle Textbook)</div>
+    <div class="mermaid">
+        mindmap
+          root((PART 2))
+              [Ch 4: 2nd Order ODEs]
+                Homogeneous Linear Eqs
+                Auxiliary Eq & Complex Roots
+                Method of Undetermined Coefficients
+                Superposition Principle
+                Variation of Parameters
+              [Ch 9: Systems of ODEs]
+                Linear Systems in Normal Form
+                Homogeneous Systems Constant Coeffs
+                Complex Eigenvalues in Systems
+                Matrix Exponential
+                  ::icon(fa fa-rocket)
+                Decoupling Systems
+              [Ch 10: Fourier & PDEs]
+                Separation of Variables
+                Fourier Series
+                  Sine Series
+                  Cosine Series
+                The Heat Equation
+                The Wave Equation
+                Laplace Equation
+    </div>
+
+    <!-- Bulleted List Section -->
+    <div class="mt-12">
+        <h2 class="text-2xl font-bold mb-6">Detailed Topic List</h2>
+        <div class="list-container">
+            <!-- Left Column: Linear Algebra -->
+            <div>
+                <h3 class="text-xl font-bold text-blue-800 border-b border-blue-200 pb-2 mb-4">Part 1: Linear Algebra</h3>
+                <ul class="content-list">
+                    <li>Chapter 1: Linear Equations in Linear Algebra
+                        <ul>
+                            <li>Row Reduction & Echelon Forms (REF/RREF)</li>
+                            <li>Vector Equations & Matrix Equations (Ax = b)</li>
+                            <li>Linear Independence</li>
+                            <li>Introduction to Linear Transformations</li>
+                            <li>One-to-One vs. Onto Mappings</li>
+                            <li>The Matrix of a Linear Transformation</li>
+                        </ul>
+                    </li>
+                    <li>Chapter 2: Matrix Algebra
+                        <ul>
+                            <li>Matrix Operations (Add, Multiply, Transpose)</li>
+                            <li>Inverse Matrices & Invertibility</li>
+                            <li>The Invertible Matrix Theorem (IMT)</li>
+                            <li>Partitioned Matrices</li>
+                        </ul>
+                    </li>
+                    <li>Chapter 3: Determinants
+                        <ul>
+                            <li>Properties of Determinants</li>
+                            <li>Cramer's Rule</li>
+                            <li>Volume & Linear Transformations</li>
+                        </ul>
+                    </li>
+                    <li>Chapter 4: Vector Spaces
+                        <ul>
+                            <li>Vector Spaces & Subspaces</li>
+                            <li>Null Space, Column Space, & Linear Transformations</li>
+                            <li>Linearly Independent Sets & Bases</li>
+                            <li>Coordinate Systems</li>
+                            <li>Dimension & Rank</li>
+                            <li>Change of Basis</li>
+                        </ul>
+                    </li>
+                    <li>Chapter 5: Eigenvalues and Eigenvectors
+                        <ul>
+                            <li>The Characteristic Equation</li>
+                            <li>Diagonalization</li>
+                            <li>Eigenvectors and Linear Transformations</li>
+                            <li>Complex Eigenvalues</li>
+                        </ul>
+                    </li>
+                    <li>Chapter 6: Orthogonality and Least Squares
+                        <ul>
+                            <li>Inner Product, Length, & Orthogonality</li>
+                            <li>Orthogonal Sets & Projections</li>
+                            <li>The Gram-Schmidt Process</li>
+                            <li>Least-Squares Problems</li>
+                        </ul>
+                    </li>
+                    <li>Chapter 7: Symmetric Matrices & SVD
+                        <ul>
+                            <li>Diagonalization of Symmetric Matrices</li>
+                            <li>Quadratic Forms</li>
+                            <li>The Singular Value Decomposition (SVD)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Right Column: Diff EQ -->
+            <div>
+                <h3 class="text-xl font-bold text-pink-800 border-b border-pink-200 pb-2 mb-4">Part 2: Differential Equations</h3>
+                <ul class="content-list">
+                    <li>Chapter 4 (Nagle): Linear Second-Order Equations
+                        <ul>
+                            <li>Homogeneous Linear Equations with Constant Coefficients</li>
+                            <li>Auxiliary Equations & Complex Roots</li>
+                            <li>The Method of Undetermined Coefficients</li>
+                            <li>The Superposition Principle</li>
+                            <li>Variation of Parameters</li>
+                        </ul>
+                    </li>
+                    <li>Chapter 9 (Nagle): Matrix Methods for Linear Systems
+                        <ul>
+                            <li>Introduction to Linear Systems (Normal Form)</li>
+                            <li>Homogeneous Linear Systems with Constant Coefficients</li>
+                            <li>Complex Eigenvalues</li>
+                            <li>Matrix Exponential (e^At)</li>
+                            <li>Decoupling Systems</li>
+                        </ul>
+                    </li>
+                    <li>Chapter 10 (Nagle): Fourier Series & PDEs
+                        <ul>
+                            <li>The Method of Separation of Variables</li>
+                            <li>Fourier Series (Convergence, Periodicity)</li>
+                            <li>Fourier Sine and Cosine Series</li>
+                            <li>The Heat Equation</li>
+                            <li>The Wave Equation</li>
+                            <li>Laplace's Equation (Depends on professor)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cheat Sheet Section -->
+    <div class="mt-12 p-6 bg-gray-50 rounded-lg border border-gray-200">
+        <h3 class="text-xl font-semibold mb-4 text-gray-800">Study "Cheat Sheet" Notes</h3>
+        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+            <li><b>The Invertible Matrix Theorem (IMT):</b> This is the "glue" of the first half. If you know how the 15+ statements relate (Invertible ⟺ Det≠0 ⟺ Columns Independent ⟺ Rows Span R^n...), you will ace Part 1.</li>
+            <li><b>Vector Spaces (Ch 4):</b> Usually the hardest conceptual hurdle. Focus on the difference between a vector *in* a basis vs. the standard basis.</li>
+            <li><b>Eigenvalues (Ch 5) & ODEs (Ch 9):</b> These two chapters are practically the same topic. If you master finding eigenvalues in Ch 5, Ch 9 is just applying that to equations like $x' = Ax$.</li>
+            <li><b>The "Final Boss":</b> For many semesters, <b>SVD (Singular Value Decomposition)</b> and <b>Fourier Series</b> are the most difficult topics tested on the final. Don't skip them!</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: {
+            primaryColor: '#e0e7ff',
+            primaryTextColor: '#1e3a8a',
+            primaryBorderColor: '#3b82f6',
+            lineColor: '#94a3b8',
+            secondaryColor: '#fce7f3',
+            tertiaryColor: '#fff'
+        }
+    });
+</script>
+
+</body>
+</html>
