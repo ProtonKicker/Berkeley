@@ -1,0 +1,11 @@
+List of lectures and discussions to study for the midterm. 
+
++ Week 2: both lectures and discussion.
++ Week 3: both lectures and discussion.
++ Week 4: both lectures but NOT the discussion.
++ Week 5: lecture B and NOT the discussion.
++ Week 6: 
+	+ from lecture A: pathlib and Path, but NOT reading and writing files.
+	+ from lecture B: namespaces and name shadowing, but NOT improt, as, and from keywords
+	+ NOT the discussion
+
