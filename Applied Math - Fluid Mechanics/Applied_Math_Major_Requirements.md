@@ -66,12 +66,13 @@ Before any alternative courses may be used as major electives, the student must 
 - Statistics 155
 
 #### Fluid Mechanics
-- **Required:** Mechanical Engineering 106
-- **Elective:** 2 of:
+- Mechanical Engineering 106
+- Mathematics 126
+- Mathematics 128B
+- 2 of:
   - Mechanical Engineering 163
-  - Chemical Engineering 141 or Engineering 115
-  - Mathematics 126
-  - Mathematics 128B
+  - Chemical Engineering 141
+  - Engineering 115
 
 #### Geophysics
 - **Required:** EPS 108
