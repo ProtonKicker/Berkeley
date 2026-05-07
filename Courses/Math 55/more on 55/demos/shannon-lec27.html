@@ -1,0 +1,1139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shannon Source Models</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17211b;
+      --muted: #5d6b62;
+      --paper: #fbfaf6;
+      --panel: #ffffff;
+      --line: #d9ded6;
+      --green: #2f7d56;
+      --green-soft: #dcecdf;
+      --blue: #2d66a3;
+      --blue-soft: #dbe7f3;
+      --red: #a84632;
+      --amber: #b77b1b;
+      --shadow: 0 14px 42px rgba(27, 38, 31, 0.10);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, rgba(220, 236, 223, 0.72), rgba(251, 250, 246, 0.86) 34rem),
+        var(--paper);
+      color: var(--ink);
+    }
+
+    button, textarea, input, select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    .app {
+      width: min(1160px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 24px 0 32px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: end;
+      padding: 8px 0 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4.7rem);
+      line-height: 0.96;
+      letter-spacing: 0;
+      max-width: 920px;
+    }
+
+    .subtitle {
+      margin: 12px 0 0;
+      color: var(--muted);
+      max-width: 820px;
+      font-size: 1rem;
+      line-height: 1.55;
+    }
+
+    .status-pill {
+      align-self: start;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.72);
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(290px, 320px) minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .controls {
+      padding: 16px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .models {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .model {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      min-height: 78px;
+      padding: 10px;
+      text-align: left;
+      display: grid;
+      gap: 5px;
+      transition: border-color 140ms, background 140ms, transform 140ms;
+    }
+
+    .model:hover {
+      transform: translateY(-1px);
+      border-color: #b8c5ba;
+    }
+
+    .model[aria-pressed="true"] {
+      background: var(--green-soft);
+      border-color: var(--green);
+    }
+
+    .model strong {
+      font-size: 0.98rem;
+    }
+
+    .model span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.3;
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .action {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      min-height: 42px;
+      font-weight: 750;
+      color: var(--ink);
+    }
+
+    .action.primary {
+      background: var(--green);
+      color: white;
+      border-color: var(--green);
+    }
+
+    .range-row {
+      display: grid;
+      grid-template-columns: 92px 1fr 52px;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--green);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 184px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--ink);
+      background: #fff;
+      line-height: 1.45;
+    }
+
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+      margin: 8px 0 0;
+    }
+
+    .stage {
+      display: grid;
+      gap: 18px;
+    }
+
+    .workbench {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .output, .distribution, .explosion {
+      padding: 18px;
+    }
+
+    .text-box {
+      min-height: 138px;
+      max-height: 210px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffefa;
+      padding: 16px;
+      font-family: "IBM Plex Mono", "Cascadia Mono", Consolas, monospace;
+      font-size: clamp(1.05rem, 2vw, 1.5rem);
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .char {
+      display: inline-block;
+      min-width: 0.66em;
+      border-radius: 4px;
+      text-align: center;
+      transition: background 160ms;
+    }
+
+    .char.latest {
+      background: #ffe39a;
+      outline: 1px solid rgba(183, 123, 27, 0.35);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fff;
+      min-height: 74px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-bottom: 5px;
+    }
+
+    .metric strong {
+      font-size: clamp(1.15rem, 2vw, 1.65rem);
+      letter-spacing: 0;
+    }
+
+    .distribution {
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+    }
+
+    .context-line {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .context {
+      font-family: "IBM Plex Mono", "Cascadia Mono", Consolas, monospace;
+      border: 1px solid var(--line);
+      background: #fbfaf6;
+      border-radius: 8px;
+      padding: 9px 10px;
+      min-height: 40px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .bars {
+      display: grid;
+      grid-template-columns: repeat(27, minmax(10px, 1fr));
+      align-items: end;
+      gap: 4px;
+      min-height: 180px;
+      padding: 8px 0 0;
+    }
+
+    .bars.word-bars {
+      grid-template-columns: repeat(12, minmax(34px, 1fr));
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) 24px 18px;
+      gap: 5px;
+      align-items: end;
+      min-width: 0;
+      height: 100%;
+      font-size: 0.72rem;
+    }
+
+    .symbol {
+      font-family: "IBM Plex Mono", "Cascadia Mono", Consolas, monospace;
+      font-weight: 800;
+      text-align: center;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 3px 0;
+      background: #fff;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .track {
+      height: 100%;
+      min-height: 6px;
+      width: 100%;
+      background: #eef1ed;
+      border-radius: 5px 5px 2px 2px;
+      overflow: hidden;
+      border: 1px solid #e1e7e0;
+      display: flex;
+      align-items: end;
+    }
+
+    .fill {
+      height: 0;
+      width: 100%;
+      background: linear-gradient(90deg, var(--green), var(--blue));
+      border-radius: 4px 4px 1px 1px;
+    }
+
+    .prob {
+      color: var(--muted);
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      font-size: 0.66rem;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .explosion {
+      min-height: 408px;
+    }
+
+    .explosion-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .formula {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .formula span {
+      color: var(--muted);
+      font-size: 0.84rem;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .formula strong {
+      font-size: 1.45rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .matrix-wrap {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .matrix-head {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.88rem;
+    }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: repeat(18, 1fr);
+      gap: 2px;
+      padding: 10px;
+      height: 146px;
+      overflow: hidden;
+    }
+
+    .cell {
+      min-height: 8px;
+      border-radius: 2px;
+      background: #edf1ec;
+    }
+
+    .cell.observed {
+      background: var(--green);
+    }
+
+    .cell.current {
+      background: var(--amber);
+    }
+
+    .footnote {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 980px) {
+      header, main, .workbench {
+        grid-template-columns: 1fr;
+      }
+
+      .status-pill {
+        justify-self: start;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .app {
+        width: min(100vw - 20px, 1400px);
+        padding-top: 14px;
+      }
+
+      .models, .button-row, .metrics, .explosion-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bars {
+        grid-template-columns: repeat(9, minmax(18px, 1fr));
+        min-height: 420px;
+      }
+
+      .bars.word-bars {
+        grid-template-columns: repeat(3, minmax(68px, 1fr));
+      }
+
+      .range-row {
+        grid-template-columns: 72px 1fr 44px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>Shannon Source Models</h1>
+        <p class="subtitle">A live classroom demo of the random-letter, frequency, digram, trigram, and word-level language sources from Shannon's 1948 paper. Each generated symbol exposes the conditional distribution used to pick it, then shows how quickly the table of possible contexts grows. Source model definitions follow <a href="https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf">A Mathematical Theory of Communication</a>.</p>
+      </div>
+      <div class="status-pill" id="modelStatus">Frequency model</div>
+    </header>
+
+    <main>
+      <aside class="panel controls">
+        <section>
+          <div class="label-row">
+            <span>Model</span>
+            <span id="orderBadge">context 0</span>
+          </div>
+          <div class="models" id="modelButtons"></div>
+        </section>
+
+        <section>
+          <div class="label-row">
+            <span>Generate</span>
+            <span id="lengthReadout">160 chars</span>
+          </div>
+          <div class="button-row">
+            <button class="action primary" id="playBtn" type="button">Play</button>
+            <button class="action" id="stepBtn" type="button">Step</button>
+            <button class="action" id="batchBtn" type="button">Batch</button>
+            <button class="action" id="resetBtn" type="button">Reset</button>
+          </div>
+          <div class="range-row">
+            <span>Length</span>
+            <input id="lengthSlider" type="range" min="40" max="320" step="20" value="160">
+            <strong id="lengthValue">160</strong>
+          </div>
+          <div class="range-row">
+            <span>Speed</span>
+            <input id="speedSlider" type="range" min="30" max="420" step="10" value="90">
+            <strong id="speedValue">90ms</strong>
+          </div>
+        </section>
+
+        <section>
+          <div class="label-row">
+            <span>Training text</span>
+            <span id="corpusStats">0 chars</span>
+          </div>
+          <select id="corpusSelect" aria-label="Choose training text">
+            <option value="alice">Alice's Adventures in Wonderland</option>
+            <option value="oz">The Wonderful Wizard of Oz</option>
+            <option value="grimm">Grimm Fairy Tales</option>
+          </select>
+          <textarea id="corpus"></textarea>
+          <p class="hint">Edit this text to let students see model estimation change. Letter models use 26 letters plus a blank; word models use the distinct words in this box.</p>
+        </section>
+      </aside>
+
+      <section class="stage">
+        <div class="workbench">
+          <div class="panel output">
+            <div class="label-row">
+              <span>Generated message</span>
+              <span id="seedStatus">seed: none</span>
+            </div>
+            <div class="text-box" id="generated"></div>
+            <div class="metrics">
+            <div class="metric"><span>Symbol set size</span><strong id="alphabetMetric">0</strong></div>
+              <div class="metric"><span>Possible contexts</span><strong id="contextMetric">1</strong></div>
+              <div class="metric"><span>Probability entries</span><strong id="entryMetric">0</strong></div>
+              <div class="metric"><span>Observed contexts</span><strong id="observedMetric">0</strong></div>
+            </div>
+          </div>
+
+          <div class="panel distribution">
+            <div class="label-row">
+              <span>Conditional histogram</span>
+            <span id="distributionLabel">P(next symbol)</span>
+            </div>
+            <div class="context-line">
+              <span>context</span>
+              <div class="context" id="contextBox">empty</div>
+            </div>
+            <div class="bars" id="bars"></div>
+            <p class="footnote" id="distributionNote"></p>
+          </div>
+        </div>
+
+        <div class="panel explosion">
+          <div class="label-row">
+            <span>Combinatorial explosion</span>
+            <span id="growthLabel">A^k</span>
+          </div>
+          <div class="explosion-grid">
+            <div class="formula"><span>Rows in table</span><strong id="rowsFormula">A^0 = 1</strong></div>
+            <div class="formula"><span>Cells to estimate</span><strong id="cellsFormula">A^1</strong></div>
+            <div class="formula"><span>Observed rows</span><strong id="observedFormula">0</strong></div>
+            <div class="formula"><span>Coverage</span><strong id="coverageFormula">0%</strong></div>
+          </div>
+          <div class="matrix-wrap">
+            <div class="matrix-head">
+              <span id="matrixTitle">Context rows</span>
+              <span id="matrixCount">showing 0 of 0</span>
+            </div>
+            <div class="matrix" id="matrix"></div>
+          </div>
+          <p class="footnote">For a symbol set of size A, or vocabulary size V in word models, and context length k, a complete conditional table needs A<sup>k</sup> or V<sup>k</sup> rows. That is the storage and data-estimation pressure Shannon's examples make visible.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const CORPORA = {
+      alice: `chapter i down the rabbit hole alice was beginning to get very tired of sitting by her sister on the bank and of having nothing to do once or twice she had peeped into the book her sister was reading but it had no pictures or conversations in it and what is the use of a book thought alice without pictures or conversations so she was considering in her own mind as well as she could for the hot day made her feel very sleepy and stupid whether the pleasure of making a daisy chain would be worth the trouble of getting up and picking the daisies when suddenly a white rabbit with pink eyes ran close by her there.
+
+was nothing so very remarkable in that nor did alice think it so very much out of the way to hear the rabbit say to itself oh dear oh dear i shall be late when she thought it over afterwards it occurred to her that she ought to have wondered at this but at the time it all seemed quite natural but when the rabbit actually took a watch out of its waistcoat pocket and looked at it and then hurried on alice started to her feet for it flashed across her mind that she had never before seen a rabbit with either a waistcoat pocket or a watch to take out of it and burning with curiosity she ran.
+
+across the field after it and fortunately was just in time to see it pop down a large rabbit hole under the hedge in another moment down went alice after it never once considering how in the world she was to get out again the rabbit hole went straight on like a tunnel for some way and then dipped suddenly down so suddenly that alice had not a moment to think about stopping herself before she found herself falling down a very deep well either the well was very deep or she fell very slowly for she had plenty of time as she went down to look about her and to wonder what was going to happen next first she.
+
+tried to look down and make out what she was coming to but it was too dark to see anything then she looked at the sides of the well and noticed that they were filled with cupboards and book shelves here and there she saw maps and pictures hung upon pegs she took down a jar from one of the shelves as she passed it was labelled orange marmalade but to her great disappointment it was empty she did not like to drop the jar for fear of killing somebody underneath so managed to put it into one of the cupboards as she fell past it well thought alice to herself after such a fall as this i shall think.
+
+nothing of tumbling down stairs how brave they ll all think me at home why i wouldn t say anything about it even if i fell off the top of the house which was very likely true down down down would the fall never come to an end i wonder how many miles i ve fallen by this time she said aloud i must be getting somewhere near the centre of the earth let me see that would be four thousand miles down i think for you see alice had learnt several things of this sort in her lessons in the schoolroom and though this was not a very good opportunity for showing off her knowledge as there was no.
+
+one to listen to her still it was good practice to say it over yes that s about the right distance but then i wonder what latitude or longitude i ve got to alice had no idea what latitude was or longitude either but thought they were nice grand words to say presently she began again i wonder if i shall fall right through the earth how funny it ll seem to come out among the people that walk with their heads downward the antipathies i think she was rather glad there was no one listening this time as it didn t sound at all the right word but i shall have to ask them what the name of the.
+
+country is you know please ma am is this new zealand or australia and she tried to curtsey as she spoke fancy curtseying as you re falling through the air do you think you could manage it and what an ignorant little girl she ll think me for asking no it ll never do to ask perhaps i shall see it written up somewhere down down down there was nothing else to do so alice soon began talking again dinah ll miss me very much to night i should think dinah was the cat i hope they ll remember her saucer of milk at tea time dinah my dear i wish you were down here with me there are no.
+
+mice in the air i m afraid but you might catch a bat and that s very like a mouse you know but do cats eat bats i wonder and here alice began to get rather sleepy and went on saying to herself in a dreamy sort of way do cats eat bats do cats eat bats and sometimes do bats eat cats for you see as she couldn t answer either question it didn t much matter which way she put it she felt that she was dozing off and had just begun to dream that she was walking hand in hand with dinah and saying to her very earnestly now dinah tell me the truth did you ever.
+
+eat a bat when suddenly thump thump down she came upon a heap of sticks and dry leaves and the fall was over alice was not a bit hurt and she jumped up on to her feet in a moment she looked up but it was all dark overhead before her was another long passage and the white rabbit was still in sight hurrying down it there was not a moment to be lost away went alice like the wind and was just in time to hear it say as it turned a corner oh my ears and whiskers how late it s getting she was close behind it when she turned the corner but the rabbit was no longer.
+
+to be seen she found herself in a long low hall which was lit up by a row of lamps hanging from the roof there were doors all round the hall but they were all locked and when alice had been all the way down one side and up the other trying every door she walked sadly down the middle wondering how she was ever to get out again suddenly she came upon a little three legged table all made of solid glass there was nothing on it except a tiny golden key and alice s first thought was that it might belong to one of the doors of the hall but alas either the locks were too large or.
+
+the key was too small but at any rate it would not open any of them however on the second time round she came upon a low curtain she had not noticed before and behind it was a little door about fifteen inches high she tried the little golden key in the lock and to her great delight it fitted alice opened the door and found that it led into a small passage not much larger than a rat hole she knelt down and looked along the passage into the loveliest garden you ever saw how she longed to get out of that dark hall and wander about among those beds of bright flowers and those cool fountains but she.
+
+could not even get her head through the doorway and even if my head would go through thought poor alice it would be of very little use without my shoulders oh how i wish i could shut up like a telescope i think i could if i only knew how to begin for you see so many out of the way things had happened lately that alice had begun to think that very few things indeed were really impossible there seemed to be no use in waiting by the little door so she went back to the table half hoping she might find another key on it or at any rate a book of rules for shutting people up like.
+
+telescopes this time she found a little bottle on it which certainly was not here before said alice and round the neck of the bottle was a paper label with the words drink me beautifully printed on it in large letters it was all very well to say drink me but the wise little alice was not going to do that in a hurry no i ll look first she said and see whether it s marked poison or not for she had read several nice little histories about children who had got burnt and eaten up by wild beasts and other unpleasant things all because they would not remember the simple rules their friends had taught them such as.
+
+that a red hot poker will burn you if you hold it too long and that if you cut your finger very deeply with a knife it usually bleeds and she had never forgotten that if you drink much from a bottle marked poison it is almost certain to disagree with you sooner or later however this bottle was not marked poison so alice ventured to taste it and finding it very nice it had in fact a sort of mixed flavour of cherry tart custard pine apple roast turkey toffee and hot buttered toast she very soon finished it off what a curious feeling said alice i must be shutting up like a telescope and so it was indeed.
+
+she was now only ten inches high and her face brightened up at the thought that she was now the right size for going through the little door into that lovely garden first however she waited for a few minutes to see if she was going to shrink any further she felt a little nervous about this for it might end you know said alice to herself in my going out altogether like a candle i wonder what i should be like then and she tried to fancy what the flame of a candle is like after the candle is blown out for she could not remember ever having seen such a thing after a while finding that nothing more.
+
+happened she decided on going into the garden at once but alas for poor alice when she got to the door she found she had forgotten the little golden key and when she went back to the table for it she found she could not possibly reach it she could see it quite plainly through the glass and she tried her best to climb up one of the legs of the table but it was too slippery and when she had tired herself out with trying the poor little thing sat down and cried come there s no use in crying like that said alice to herself rather sharply i advise you to leave off this minute she generally gave.
+
+herself very good advice though she very seldom followed it and sometimes she scolded herself so severely as to bring tears into her eyes and once she remembered trying to box her own ears for having cheated herself in a game of croquet she was playing against herself for this curious child was very fond of pretending to be two people but it s no use now thought poor alice to pretend to be two people why there s hardly enough of me left to make one respectable person soon her eye fell on a little glass box that was lying under the table she opened it and found in it a very small cake on which the words eat.
+
+me were beautifully marked in currants well i ll eat it said alice and if it makes me grow larger i can reach the key and if it makes me grow smaller i can creep under the door so either way i ll get into the garden and i don t care which happens she ate a little bit and said anxiously to herself which way which way holding her hand on the top of her head to feel which way it was growing and she was quite surprised to find that she remained the same size to be sure this generally happens when one eats cake but alice had got so much into the way of expecting nothing but.
+
+out of the way things to happen that it seemed quite dull and stupid for life to go on in the common way so she set to work and very soon finished off the cake chapter ii the pool of tears curiouser and curiouser cried alice she was so much surprised that for the moment she quite forgot how to speak good english now i m opening out like the largest telescope that ever was good bye feet for when she looked down at her feet they seemed to be almost out of sight they were getting so far off oh my poor little feet i wonder who will put on your shoes and stockings for you now dears i.
+
+m sure i shan t be able i shall be a great deal too far off to trouble myself about you you must manage the best way you can but i must be kind to them thought alice or perhaps they won t walk the way i want to go let me see i ll give them a new pair of boots every christmas and she went on planning to herself how she would manage it they must go by the carrier she thought and how funny it ll seem sending presents to one s own feet and how odd the directions will look alice s right foot esq hearthrug near the fender with alice s love oh dear what.`,
+
+      oz: `the cyclone dorothy lived in the midst of the great kansas prairies with uncle henry who was a farmer and aunt em who was the farmer s wife their house was small for the lumber to build it had to be carried by wagon many miles there were four walls a floor and a roof which made one room and this room contained a rusty looking cookstove a cupboard for the dishes a table three or four chairs and the beds uncle henry and aunt em had a big bed in one corner and dorothy a little bed in another corner there was no garret at all and no cellar except a small hole dug in the ground called a.
+
+cyclone cellar where the family could go in case one of those great whirlwinds arose mighty enough to crush any building in its path it was reached by a trap door in the middle of the floor from which a ladder led down into the small dark hole when dorothy stood in the doorway and looked around she could see nothing but the great gray prairie on every side not a tree nor a house broke the broad sweep of flat country that reached to the edge of the sky in all directions the sun had baked the plowed land into a gray mass with little cracks running through it even the grass was not green for the sun had.
+
+burned the tops of the long blades until they were the same gray color to be seen everywhere once the house had been painted but the sun blistered the paint and the rains washed it away and now the house was as dull and gray as everything else when aunt em came there to live she was a young pretty wife the sun and wind had changed her too they had taken the sparkle from her eyes and left them a sober gray they had taken the red from her cheeks and lips and they were gray also she was thin and gaunt and never smiled now when dorothy who was an orphan first came to her aunt em had.
+
+been so startled by the child s laughter that she would scream and press her hand upon her heart whenever dorothy s merry voice reached her ears and she still looked at the little girl with wonder that she could find anything to laugh at uncle henry never laughed he worked hard from morning till night and did not know what joy was he was gray also from his long beard to his rough boots and he looked stern and solemn and rarely spoke it was toto that made dorothy laugh and saved her from growing as gray as her other surroundings toto was not gray he was a little black dog with long silky hair and small black eyes.
+
+that twinkled merrily on either side of his funny wee nose toto played all day long and dorothy played with him and loved him dearly today however they were not playing uncle henry sat upon the doorstep and looked anxiously at the sky which was even grayer than usual dorothy stood in the door with toto in her arms and looked at the sky too aunt em was washing the dishes from the far north they heard a low wail of the wind and uncle henry and dorothy could see where the long grass bowed in waves before the coming storm there now came a sharp whistling in the air from the south and as they turned their eyes that.
+
+way they saw ripples in the grass coming from that direction also suddenly uncle henry stood up there s a cyclone coming em he called to his wife i ll go look after the stock then he ran toward the sheds where the cows and horses were kept aunt em dropped her work and came to the door one glance told her of the danger close at hand quick dorothy she screamed run for the cellar toto jumped out of dorothy s arms and hid under the bed and the girl started to get him aunt em badly frightened threw open the trap door in the floor and climbed down the ladder into the small dark hole dorothy caught toto.
+
+at last and started to follow her aunt when she was halfway across the room there came a great shriek from the wind and the house shook so hard that she lost her footing and sat down suddenly upon the floor then a strange thing happened the house whirled around two or three times and rose slowly through the air dorothy felt as if she were going up in a balloon the north and south winds met where the house stood and made it the exact center of the cyclone in the middle of a cyclone the air is generally still but the great pressure of the wind on every side of the house raised it up higher and higher.
+
+until it was at the very top of the cyclone and there it remained and was carried miles and miles away as easily as you could carry a feather it was very dark and the wind howled horribly around her but dorothy found she was riding quite easily after the first few whirls around and one other time when the house tipped badly she felt as if she were being rocked gently like a baby in a cradle toto did not like it he ran about the room now here now there barking loudly but dorothy sat quite still on the floor and waited to see what would happen once toto got too near the open trap door and fell.
+
+in and at first the little girl thought she had lost him but soon she saw one of his ears sticking up through the hole for the strong pressure of the air was keeping him up so that he could not fall she crept to the hole caught toto by the ear and dragged him into the room again afterward closing the trap door so that no more accidents could happen hour after hour passed away and slowly dorothy got over her fright but she felt quite lonely and the wind shrieked so loudly all about her that she nearly became deaf at first she had wondered if she would be dashed to pieces when the house fell again but.
+
+as the hours passed and nothing terrible happened she stopped worrying and resolved to wait calmly and see what the future would bring at last she crawled over the swaying floor to her bed and lay down upon it and toto followed and lay down beside her in spite of the swaying of the house and the wailing of the wind dorothy soon closed her eyes and fell fast asleep chapter ii the council with the munchkins she was awakened by a shock so sudden and severe that if dorothy had not been lying on the soft bed she might have been hurt as it was the jar made her catch her breath and wonder what had happened and toto.
+
+put his cold little nose into her face and whined dismally dorothy sat up and noticed that the house was not moving nor was it dark for the bright sunshine came in at the window flooding the little room she sprang from her bed and with toto at her heels ran and opened the door the little girl gave a cry of amazement and looked about her her eyes growing bigger and bigger at the wonderful sights she saw the cyclone had set the house down very gently for a cyclone in the midst of a country of marvelous beauty there were lovely patches of greensward all about with stately trees bearing rich and luscious fruits banks of gorgeous flowers.
+
+were on every hand and birds with rare and brilliant plumage sang and fluttered in the trees and bushes a little way off was a small brook rushing and sparkling along between green banks and murmuring in a voice very grateful to a little girl who had lived so long on the dry gray prairies while she stood looking eagerly at the strange and beautiful sights she noticed coming toward her a group of the queerest people she had ever seen they were not as big as the grown folk she had always been used to but neither were they very small in fact they seemed about as tall as dorothy who was a well grown child for her age.
+
+although they were so far as looks go many years older three were men and one a woman and all were oddly dressed they wore round hats that rose to a small point a foot above their heads with little bells around the brims that tinkled sweetly as they moved the hats of the men were blue the little woman s hat was white and she wore a white gown that hung in pleats from her shoulders over it were sprinkled little stars that glistened in the sun like diamonds the men were dressed in blue of the same shade as their hats and wore well polished boots with a deep roll of blue at the tops the men dorothy.
+
+thought were about as old as uncle henry for two of them had beards but the little woman was doubtless much older her face was covered with wrinkles her hair was nearly white and she walked rather stiffly when these people drew near the house where dorothy was standing in the doorway they paused and whispered among themselves as if afraid to come farther but the little old woman walked up to dorothy made a low bow and said in a sweet voice you are welcome most noble sorceress to the land of the munchkins we are so grateful to you for having killed the wicked witch of the east and for setting our people free from bondage dorothy listened.
+
+to this speech with wonder what could the little woman possibly mean by calling her a sorceress and saying she had killed the wicked witch of the east dorothy was an innocent harmless little girl who had been carried by a cyclone many miles from home and she had never killed anything in all her life but the little woman evidently expected her to answer so dorothy said with hesitation you are very kind but there must be some mistake i have not killed anything your house did anyway replied the little old woman with a laugh and that is the same thing see she continued pointing to the corner of the house there are her two feet still sticking.
+
+out from under a block of wood dorothy looked and gave a little cry of fright there indeed just under the corner of the great beam the house rested on two feet were sticking out shod in silver shoes with pointed toes oh dear oh dear cried dorothy clasping her hands together in dismay the house must have fallen on her whatever shall we do there is nothing to be done said the little woman calmly but who was she asked dorothy she was the wicked witch of the east as i said answered the little woman she has held all the munchkins in bondage for many years making them slave for her night and day now they are all.
+
+set free and are grateful to you for the favor who are the munchkins inquired dorothy they are the people who live in this land of the east where the wicked witch ruled are you a munchkin asked dorothy no but i am their friend although i live in the land of the north when they saw the witch of the east was dead the munchkins sent a swift messenger to me and i came at once i am the witch of the north oh gracious cried dorothy are you a real witch yes indeed answered the little woman but i am a good witch and the people love me i am not as powerful as the wicked witch was.
+
+who ruled here or i should have set the people free myself but i thought all witches were wicked said the girl who was half frightened at facing a real witch oh no that is a great mistake there were only four witches in all the land of oz and two of them those who live in the north and the south are good witches i know this is true for i am one of them myself and cannot be mistaken those who dwelt in the east and the west were indeed wicked witches but now that you have killed one of them there is but one wicked witch in all the land of oz the one who lives in.
+
+the west but said dorothy after a moment s thought aunt em has told me that the witches were all dead years and years ago who is aunt em inquired the little old woman she is my aunt who lives in kansas where i came from the witch of the north seemed to think for a time with her head bowed and her eyes upon the ground then she looked up and said i do not know where kansas is for i have never heard that country mentioned before but tell me is it a civilized country oh yes replied dorothy then that accounts for it in the civilized countries i believe there are no witches left nor wizards nor.
+
+sorceresses nor magicians but you see the land of oz has never been civilized for we are cut off from all the rest of the world therefore we still have witches and wizards amongst us who are the wizards asked dorothy oz himself is the great wizard answered the witch sinking her voice to a whisper he is more powerful than all the rest of us together he lives in the city of emeralds dorothy was going to ask another question but just then the munchkins who had been standing silently by gave a loud shout and pointed to the corner of the house where the wicked witch had been lying what is it asked the little old woman and.`,
+
+      grimm: `the golden bird a certain king had a beautiful garden and in the garden stood a tree which bore golden apples these apples were always counted and about the time when they began to grow ripe it was found that every night one of them was gone the king became very angry at this and ordered the gardener to keep watch all night under the tree the gardener set his eldest son to watch but about twelve o clock he fell asleep and in the morning another of the apples was missing then the second son was ordered to watch and at midnight he too fell asleep and in the morning another apple was gone then the third son offered.
+
+to keep watch but the gardener at first would not let him for fear some harm should come to him however at last he consented and the young man laid himself under the tree to watch as the clock struck twelve he heard a rustling noise in the air and a bird came flying that was of pure gold and as it was snapping at one of the apples with its beak the gardener s son jumped up and shot an arrow at it but the arrow did the bird no harm only it dropped a golden feather from its tail and then flew away the golden feather was brought to the king in the morning and all the council.
+
+was called together everyone agreed that it was worth more than all the wealth of the kingdom but the king said one feather is of no use to me i must have the whole bird then the gardener s eldest son set out and thought to find the golden bird very easily and when he had gone but a little way he came to a wood and by the side of the wood he saw a fox sitting so he took his bow and made ready to shoot at it then the fox said do not shoot me for i will give you good counsel i know what your business is and that you want to find the golden bird.
+
+you will reach a village in the evening and when you get there you will see two inns opposite to each other one of which is very pleasant and beautiful to look at go not in there but rest for the night in the other though it may appear to you to be very poor and mean but the son thought to himself what can such a beast as this know about the matter so he shot his arrow at the fox but he missed it and it set up its tail above its back and ran into the wood then he went his way and in the evening came to the village where the two inns were and in.
+
+one of these were people singing and dancing and feasting but the other looked very dirty and poor i should be very silly said he if i went to that shabby house and left this charming place so he went into the smart house and ate and drank at his ease and forgot the bird and his country too time passed on and as the eldest son did not come back and no tidings were heard of him the second son set out and the same thing happened to him he met the fox who gave him the good advice but when he came to the two inns his eldest brother was standing at the window where the merrymaking was.
+
+and called to him to come in and he could not withstand the temptation but went in and forgot the golden bird and his country in the same manner time passed on again and the youngest son too wished to set out into the wide world to seek for the golden bird but his father would not listen to it for a long while for he was very fond of his son and was afraid that some ill luck might happen to him also and prevent his coming back however at last it was agreed he should go for he would not rest at home and as he came to the wood he met the fox and heard the same.
+
+good counsel but he was thankful to the fox and did not attempt his life as his brothers had done so the fox said sit upon my tail and you will travel faster so he sat down and the fox began to run and away they went over stock and stone so quick that their hair whistled in the wind when they came to the village the son followed the fox s counsel and without looking about him went to the shabby inn and rested there all night at his ease in the morning came the fox again and met him as he was beginning his journey and said go straight forward till you come to a castle before which.
+
+lie a whole troop of soldiers fast asleep and snoring take no notice of them but go into the castle and pass on and on till you come to a room where the golden bird sits in a wooden cage close by it stands a beautiful golden cage but do not try to take the bird out of the shabby cage and put it into the handsome one otherwise you will repent it then the fox stretched out his tail again and the young man sat himself down and away they went over stock and stone till their hair whistled in the wind before the castle gate all was as the fox had said so the son went in and.
+
+found the chamber where the golden bird hung in a wooden cage and below stood the golden cage and the three golden apples that had been lost were lying close by it then thought he to himself it will be a very droll thing to bring away such a fine bird in this shabby cage so he opened the door and took hold of it and put it into the golden cage but the bird set up such a loud scream that all the soldiers awoke and they took him prisoner and carried him before the king the next morning the court sat to judge him and when all was heard it sentenced him to die unless he should bring.
+
+the king the golden horse which could run as swiftly as the wind and if he did this he was to have the golden bird given him for his own so he set out once more on his journey sighing and in great despair when on a sudden his friend the fox met him and said you see now what has happened on account of your not listening to my counsel i will still however tell you how to find the golden horse if you will do as i bid you you must go straight on till you come to the castle where the horse stands in his stall by his side will lie the groom fast asleep and snoring.
+
+take away the horse quietly but be sure to put the old leathern saddle upon him and not the golden one that is close by it then the son sat down on the fox s tail and away they went over stock and stone till their hair whistled in the wind all went right and the groom lay snoring with his hand upon the golden saddle but when the son looked at the horse he thought it a great pity to put the leathern saddle upon it i will give him the good one said he i am sure he deserves it as he took up the golden saddle the groom awoke and cried out so loud that all the.
+
+guards ran in and took him prisoner and in the morning he was again brought before the court to be judged and was sentenced to die but it was agreed that if he could bring thither the beautiful princess he should live and have the bird and the horse given him for his own then he went his way very sorrowful but the old fox came and said why did not you listen to me if you had you would have carried away both the bird and the horse yet will i once more give you counsel go straight on and in the evening you will arrive at a castle at twelve o clock at night the princess goes to.
+
+the bathing house go up to her and give her a kiss and she will let you lead her away but take care you do not suffer her to go and take leave of her father and mother then the fox stretched out his tail and so away they went over stock and stone till their hair whistled again as they came to the castle all was as the fox had said and at twelve o clock the young man met the princess going to the bath and gave her the kiss and she agreed to run away with him but begged with many tears that he would let her take leave of her father at first he refused but.
+
+she wept still more and more and fell at his feet till at last he consented but the moment she came to her father s house the guards awoke and he was taken prisoner again then he was brought before the king and the king said you shall never have my daughter unless in eight days you dig away the hill that stops the view from my window now this hill was so big that the whole world could not take it away and when he had worked for seven days and had done very little the fox came and said lie down and go to sleep i will work for you and in the morning he awoke and the.
+
+hill was gone so he went merrily to the king and told him that now that it was removed he must give him the princess then the king was obliged to keep his word and away went the young man and the princess and the fox came and said to him we will have all three the princess the horse and the bird ah said the young man that would be a great thing but how can you contrive it if you will only listen said the fox it can be done when you come to the king and he asks for the beautiful princess you must say here she is then he will be very joyful and you will.
+
+mount the golden horse that they are to give you and put out your hand to take leave of them but shake hands with the princess last then lift her quickly on to the horse behind you clap your spurs to his side and gallop away as fast as you can all went right then the fox said when you come to the castle where the bird is i will stay with the princess at the door and you will ride in and speak to the king and when he sees that it is the right horse he will bring out the bird but you must sit still and say that you want to look at it to see whether.
+
+it is the true golden bird and when you get it into your hand ride away this too happened as the fox said they carried off the bird the princess mounted again and they rode on to a great wood then the fox came and said pray kill me and cut off my head and my feet but the young man refused to do it so the fox said i will at any rate give you good counsel beware of two things ransom no one from the gallows and sit down by the side of no river then away he went well thought the young man it is no hard matter to keep that advice he rode on with the.
+
+princess till at last he came to the village where he had left his two brothers and there he heard a great noise and uproar and when he asked what was the matter the people said two men are going to be hanged as he came nearer he saw that the two men were his brothers who had turned robbers so he said cannot they in any way be saved but the people said no unless he would bestow all his money upon the rascals and buy their liberty then he did not stay to think about the matter but paid what was asked and his brothers were given up and went on with him towards their home and as.
+
+they came to the wood where the fox first met them it was so cool and pleasant that the two brothers said let us sit down by the side of the river and rest a while to eat and drink so he said yes and forgot the fox s counsel and sat down on the side of the river and while he suspected nothing they came behind and threw him down the bank and took the princess the horse and the bird and went home to the king their master and said all this have we won by our labour then there was great rejoicing made but the horse would not eat the bird would not sing and the princess.
+
+wept the youngest son fell to the bottom of the river s bed luckily it was nearly dry but his bones were almost broken and the bank was so steep that he could find no way to get out then the old fox came once more and scolded him for not following his advice otherwise no evil would have befallen him yet said he i cannot leave you here so lay hold of my tail and hold fast then he pulled him out of the river and said to him as he got upon the bank your brothers have set watch to kill you if they find you in the kingdom so he dressed himself as a poor man and.`
+    };
+
+    const SAMPLE_CORPUS = CORPORA.alice;
+
+    const MODELS = [
+      { id: "equiprobable", name: "Random letters", unit: "char", shannon: "zero-order", context: 0, description: "Every character equally likely." },
+      { id: "frequency", name: "Letter frequency", unit: "char", shannon: "first-order", context: 0, description: "Characters independent, weighted by frequency." },
+      { id: "digram", name: "Digram", unit: "char", shannon: "second-order", context: 1, description: "P(next character | previous character)." },
+      { id: "trigram", name: "Trigram", unit: "char", shannon: "third-order", context: 2, description: "P(next character | previous two)." },
+      { id: "word_frequency", name: "Word frequency", unit: "word", shannon: "word source", context: 0, description: "Words independent, weighted by frequency." },
+      { id: "word_bigram", name: "Word bigram", unit: "word", shannon: "word source", context: 1, description: "P(next word | previous word)." }
+    ];
+
+    const state = {
+      modelId: "frequency",
+      corpus: "",
+      alphabet: [],
+      words: [],
+      vocabulary: [],
+      tables: new Map(),
+      output: [],
+      lastDistribution: [],
+      lastContext: "",
+      lastChar: "",
+      timer: null,
+      targetLength: 160
+    };
+
+    const els = {
+      modelButtons: document.querySelector("#modelButtons"),
+      modelStatus: document.querySelector("#modelStatus"),
+      orderBadge: document.querySelector("#orderBadge"),
+      playBtn: document.querySelector("#playBtn"),
+      stepBtn: document.querySelector("#stepBtn"),
+      batchBtn: document.querySelector("#batchBtn"),
+      resetBtn: document.querySelector("#resetBtn"),
+      lengthSlider: document.querySelector("#lengthSlider"),
+      lengthValue: document.querySelector("#lengthValue"),
+      lengthReadout: document.querySelector("#lengthReadout"),
+      speedSlider: document.querySelector("#speedSlider"),
+      speedValue: document.querySelector("#speedValue"),
+      corpusSelect: document.querySelector("#corpusSelect"),
+      corpus: document.querySelector("#corpus"),
+      corpusStats: document.querySelector("#corpusStats"),
+      generated: document.querySelector("#generated"),
+      seedStatus: document.querySelector("#seedStatus"),
+      alphabetMetric: document.querySelector("#alphabetMetric"),
+      contextMetric: document.querySelector("#contextMetric"),
+      entryMetric: document.querySelector("#entryMetric"),
+      observedMetric: document.querySelector("#observedMetric"),
+      distributionLabel: document.querySelector("#distributionLabel"),
+      contextBox: document.querySelector("#contextBox"),
+      bars: document.querySelector("#bars"),
+      distributionNote: document.querySelector("#distributionNote"),
+      growthLabel: document.querySelector("#growthLabel"),
+      rowsFormula: document.querySelector("#rowsFormula"),
+      cellsFormula: document.querySelector("#cellsFormula"),
+      observedFormula: document.querySelector("#observedFormula"),
+      coverageFormula: document.querySelector("#coverageFormula"),
+      matrixTitle: document.querySelector("#matrixTitle"),
+      matrixCount: document.querySelector("#matrixCount"),
+      matrix: document.querySelector("#matrix")
+    };
+
+    function normalize(text) {
+      return text
+        .toLowerCase()
+        .replace(/[^a-z ]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function makeAlphabet(text) {
+      return [" ", ..."abcdefghijklmnopqrstuvwxyz"];
+    }
+
+    function makeWords(text) {
+      return text.split(" ").filter(Boolean);
+    }
+
+    function makeVocabulary(words) {
+      return [...new Set(words)].sort((a, b) => a.localeCompare(b));
+    }
+
+    function currentModel() {
+      return MODELS.find(model => model.id === state.modelId);
+    }
+
+    function keyFor(context) {
+      if (Array.isArray(context)) return context.length ? context.join("\u0001") : "__empty__";
+      return context || "__empty__";
+    }
+
+    function labelSymbol(symbol) {
+      return symbol === " " ? "space" : symbol;
+    }
+
+    function symbolsFor(model) {
+      return model.unit === "word" ? state.vocabulary : state.alphabet;
+    }
+
+    function sourceFor(model) {
+      return model.unit === "word" ? state.words : state.corpus.split("");
+    }
+
+    function shortNumber(value) {
+      if (value >= 1e9) return `${(value / 1e9).toFixed(1)}B`;
+      if (value >= 1e6) return `${(value / 1e6).toFixed(1)}M`;
+      if (value >= 1e3) return `${(value / 1e3).toFixed(1)}K`;
+      return `${value}`;
+    }
+
+    function buildTables() {
+      state.corpus = normalize(els.corpus.value) || SAMPLE_CORPUS;
+      state.alphabet = makeAlphabet(state.corpus);
+      state.words = makeWords(state.corpus);
+      state.vocabulary = makeVocabulary(state.words);
+      state.tables = new Map();
+
+      for (const model of MODELS) {
+        if (model.id === "equiprobable") continue;
+        const source = sourceFor(model);
+        const countsByContext = new Map();
+        for (let i = 0; i < source.length; i += 1) {
+          if (i < model.context) continue;
+          const context = model.context === 0 ? [] : source.slice(i - model.context, i);
+          const symbol = source[i];
+          const key = keyFor(context);
+          if (!countsByContext.has(key)) countsByContext.set(key, new Map());
+          countsByContext.get(key).set(symbol, (countsByContext.get(key).get(symbol) || 0) + 1);
+        }
+        state.tables.set(model.id, countsByContext);
+      }
+      renderAll();
+    }
+
+    function distributionFor(model, context) {
+      if (model.id === "equiprobable") {
+        const symbols = symbolsFor(model);
+        const p = 1 / symbols.length;
+        return symbols.map(symbol => ({ symbol, p, count: 1 }));
+      }
+
+      const table = state.tables.get(model.id);
+      const contextParts = Array.isArray(context) ? context : context.split("");
+      const fallbacks = [contextParts];
+      for (let k = contextParts.length - 1; k >= 0; k -= 1) {
+        fallbacks.push(contextParts.slice(contextParts.length - k));
+      }
+      fallbacks.push([]);
+
+      let counts = null;
+      let usedContext = context;
+      for (const candidate of fallbacks) {
+        counts = table.get(keyFor(candidate));
+        if (counts) {
+          usedContext = candidate;
+          break;
+        }
+      }
+
+      if (!counts) {
+        const fallbackId = model.unit === "word" ? "word_frequency" : "frequency";
+        counts = state.tables.get(fallbackId).get(keyFor([]));
+        usedContext = [];
+      }
+
+      const total = [...counts.values()].reduce((sum, count) => sum + count, 0);
+      const dist = [...counts.entries()]
+        .map(([symbol, count]) => ({ symbol, count, p: count / total }))
+        .sort((a, b) => b.p - a.p || a.symbol.localeCompare(b.symbol));
+
+      dist.usedContext = usedContext;
+      return dist;
+    }
+
+    function choose(dist) {
+      let r = Math.random();
+      for (const item of dist) {
+        r -= item.p;
+        if (r <= 0) return item.symbol;
+      }
+      return dist[dist.length - 1].symbol;
+    }
+
+    function step() {
+      const model = currentModel();
+      const context = model.context === 0 ? [] : state.output.slice(-model.context);
+      const dist = distributionFor(model, context);
+      const symbol = choose(dist);
+
+      state.output.push(symbol);
+      if (state.output.length > state.targetLength) {
+        state.output = state.output.slice(-state.targetLength);
+      }
+      state.lastDistribution = dist;
+      state.lastContext = dist.usedContext ?? context;
+      state.lastChar = symbol;
+      renderAll();
+      if (state.output.length >= state.targetLength) stop();
+    }
+
+    function batch() {
+      const remaining = Math.max(1, state.targetLength - state.output.length);
+      const count = Math.min(40, remaining);
+      for (let i = 0; i < count; i += 1) step();
+    }
+
+    function play() {
+      if (state.timer) {
+        stop();
+        return;
+      }
+      els.playBtn.textContent = "Pause";
+      state.timer = window.setInterval(step, Number(els.speedSlider.value));
+    }
+
+    function stop() {
+      if (!state.timer) return;
+      window.clearInterval(state.timer);
+      state.timer = null;
+      els.playBtn.textContent = "Play";
+    }
+
+    function reset() {
+      stop();
+      state.output = [];
+      state.lastDistribution = [];
+      state.lastContext = "";
+      state.lastChar = "";
+      renderAll();
+    }
+
+    function possibleRows(model) {
+      return Math.pow(symbolsFor(model).length || 1, model.context);
+    }
+
+    function possibleCells(model) {
+      return Math.pow(symbolsFor(model).length || 1, model.context + 1);
+    }
+
+    function observedRows(model) {
+      if (model.id === "equiprobable") return 1;
+      return state.tables.get(model.id)?.size || 0;
+    }
+
+    function renderModels() {
+      els.modelButtons.innerHTML = "";
+      for (const model of MODELS) {
+        const button = document.createElement("button");
+        button.className = "model";
+        button.type = "button";
+        button.setAttribute("aria-pressed", model.id === state.modelId ? "true" : "false");
+        button.innerHTML = `<strong>${model.name}</strong><span>${model.shannon}; ${model.description}</span>`;
+        button.addEventListener("click", () => {
+          state.modelId = model.id;
+          reset();
+        });
+        els.modelButtons.append(button);
+      }
+    }
+
+    function renderOutput() {
+      const model = currentModel();
+      els.generated.innerHTML = state.output.map((symbol, index) => {
+        const latest = index === state.output.length - 1 ? " latest" : "";
+        const display = symbol === " " ? "&nbsp;" : symbol;
+        const spacer = model.unit === "word" && index < state.output.length - 1 ? " " : "";
+        return `<span class="char${latest}">${display}</span>${spacer}`;
+      }).join("");
+      if (!state.output.length) els.generated.textContent = "Press Step or Play to generate text.";
+      els.seedStatus.textContent = state.output.length ? `last picked: ${labelSymbol(state.lastChar)}` : "seed: none";
+    }
+
+    function renderDistribution() {
+      const model = currentModel();
+      let dist = state.lastDistribution;
+      if (!dist.length) {
+        const context = [];
+        dist = distributionFor(model, context);
+        state.lastContext = dist.usedContext ?? context;
+      }
+
+      const unitLabel = model.unit === "word" ? "word" : "character";
+      els.distributionLabel.textContent = model.context === 0 ? `P(next ${unitLabel})` : `P(next ${unitLabel} | ${model.context} previous)`;
+      const contextText = Array.isArray(state.lastContext) ? state.lastContext.join(" ") : state.lastContext;
+      els.contextBox.textContent = model.context === 0 ? "empty" : contextText.replaceAll(" ", ".") || "fallback: frequency";
+
+      const bySymbol = new Map(dist.map(item => [item.symbol, item]));
+      const full = model.unit === "word"
+        ? dist.slice(0, 12)
+        : state.alphabet.map(symbol => bySymbol.get(symbol) || { symbol, count: 0, p: 0 });
+      const maxP = Math.max(...full.map(item => item.p), 0.01);
+      els.bars.classList.toggle("word-bars", model.unit === "word");
+      els.bars.innerHTML = full.map(item => `
+        <div class="bar-row">
+          <div class="symbol" title="${item.symbol === " " ? "space" : item.symbol}">${item.symbol === " " ? "." : item.symbol}</div>
+          <div class="track"><div class="fill" style="height: ${Math.max(1, item.p / maxP * 100)}%"></div></div>
+          <div class="prob">${(item.p * 100).toFixed(1)}%</div>
+        </div>
+      `).join("");
+
+      const source = model.id === "equiprobable"
+        ? "This is Shannon's equal-probability random-letter source."
+        : `Probabilities are estimated from the training text using ${model.unit === "word" ? "word" : "letter"} n-gram counts.`;
+      els.distributionNote.textContent = source;
+    }
+
+    function renderExplosion() {
+      const model = currentModel();
+      const a = symbolsFor(model).length || 1;
+      const rows = possibleRows(model);
+      const cells = possibleCells(model);
+      const observed = observedRows(model);
+      const coverage = rows ? Math.min(100, observed / rows * 100) : 0;
+
+      els.alphabetMetric.textContent = a;
+      els.contextMetric.textContent = shortNumber(rows);
+      els.entryMetric.textContent = shortNumber(cells);
+      els.observedMetric.textContent = shortNumber(observed);
+      els.growthLabel.textContent = `${model.unit === "word" ? "V" : "A"} = ${a}, k = ${model.context}`;
+      const base = model.unit === "word" ? "V" : "A";
+      els.rowsFormula.textContent = `${base}^${model.context} = ${shortNumber(rows)}`;
+      els.cellsFormula.textContent = `${base}^${model.context + 1} = ${shortNumber(cells)}`;
+      els.observedFormula.textContent = shortNumber(observed);
+      els.coverageFormula.textContent = `${coverage < 0.1 && coverage > 0 ? "<0.1" : coverage.toFixed(1)}%`;
+
+      const shown = Math.min(216, rows);
+      els.matrixTitle.textContent = model.context === 0 ? "Single frequency row" : `Rows for ${model.context}-${model.unit} contexts`;
+      els.matrixCount.textContent = `showing ${shortNumber(shown)} of ${shortNumber(rows)}`;
+      els.matrix.innerHTML = "";
+
+      const observedSet = new Set();
+      const table = state.tables.get(model.id);
+      if (table) {
+        let i = 0;
+        for (const key of table.keys()) {
+          if (i >= shown) break;
+          observedSet.add(i);
+          i += Math.max(1, Math.floor(shown / Math.max(1, table.size)));
+        }
+      }
+
+      for (let i = 0; i < shown; i += 1) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        if (model.context === 0 || observedSet.has(i)) cell.classList.add("observed");
+        if (state.lastContext && i === Math.abs(hashCode(state.lastContext)) % shown) cell.classList.add("current");
+        els.matrix.append(cell);
+      }
+    }
+
+    function hashCode(text) {
+      text = Array.isArray(text) ? text.join("\u0001") : String(text);
+      let hash = 0;
+      for (let i = 0; i < text.length; i += 1) {
+        hash = ((hash << 5) - hash) + text.charCodeAt(i);
+        hash |= 0;
+      }
+      return hash;
+    }
+
+    function renderAll() {
+      const model = currentModel();
+      els.modelStatus.textContent = `${model.name} model`;
+      els.orderBadge.textContent = `context ${model.context}`;
+      els.corpusStats.textContent = `${state.corpus.length} chars, ${state.vocabulary.length} words`;
+      els.lengthValue.textContent = els.lengthSlider.value;
+      els.lengthReadout.textContent = `${els.lengthSlider.value} ${model.unit === "word" ? "words" : "chars"}`;
+      els.speedValue.textContent = `${els.speedSlider.value}ms`;
+      renderModels();
+      renderOutput();
+      renderDistribution();
+      renderExplosion();
+    }
+
+    els.playBtn.addEventListener("click", play);
+    els.stepBtn.addEventListener("click", step);
+    els.batchBtn.addEventListener("click", batch);
+    els.resetBtn.addEventListener("click", reset);
+    els.lengthSlider.addEventListener("input", () => {
+      state.targetLength = Number(els.lengthSlider.value);
+      renderAll();
+    });
+    els.speedSlider.addEventListener("input", () => {
+      if (state.timer) {
+        stop();
+        play();
+      }
+      renderAll();
+    });
+    els.corpusSelect.addEventListener("change", () => {
+      els.corpus.value = CORPORA[els.corpusSelect.value];
+      reset();
+      buildTables();
+    });
+    els.corpus.addEventListener("input", () => {
+      reset();
+      buildTables();
+    });
+
+    els.corpus.value = CORPORA[els.corpusSelect.value];
+    state.targetLength = Number(els.lengthSlider.value);
+    buildTables();
+  </script>
+</body>
+</html>
