@@ -1,0 +1,885 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Chapter 4 Numerical Differentiation and Integration</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; } /* Alert */
+    code span.an { color: #008000; } /* Annotation */
+    code span.at { } /* Attribute */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #0000ff; } /* ControlFlow */
+    code span.ch { color: #008080; } /* Char */
+    code span.cn { } /* Constant */
+    code span.co { color: #008000; } /* Comment */
+    code span.cv { color: #008000; } /* CommentVar */
+    code span.do { color: #008000; } /* Documentation */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.im { } /* Import */
+    code span.in { color: #008000; } /* Information */
+    code span.kw { color: #0000ff; } /* Keyword */
+    code span.op { } /* Operator */
+    code span.ot { color: #ff4000; } /* Other */
+    code span.pp { color: #ff4000; } /* Preprocessor */
+    code span.sc { color: #008080; } /* SpecialChar */
+    code span.ss { color: #008080; } /* SpecialString */
+    code span.st { color: #008080; } /* String */
+    code span.va { } /* Variable */
+    code span.vs { color: #008080; } /* VerbatimString */
+    code span.wa { color: #008000; font-weight: bold; } /* Warning */
+    .skip-main {
+        position: absolute;
+        top: -1000px;
+        left: -1000px;
+        height: 1px;
+        width: 1px;
+        text-align: left;
+        overflow: hidden;
+    }
+    .skip-main:focus, .skip-main:active {
+        top: 0;
+        left: 0;
+        height: auto;
+        width: auto;
+        padding: 10px;
+        background: #fff;
+        z-index: 1000;
+        border: 2px solid #000;
+    }
+    /* Contrast fixes for code highlighting and body text */
+    body { color: #000 !important; }
+    pre.numberSource code > span > a:first-child::before { color: #767676 !important; }
+    pre.numberSource { border-left: 1px solid #767676 !important; }
+    code span.co { color: #006600 !important; }
+    code span.ot { color: #bc3f00 !important; }
+    code span.pp { color: #bc3f00 !important; }
+    code span.er { color: #d00000 !important; font-weight: bold; }
+    code span.al { color: #d00000 !important; }
+  </style>
+  <link rel="stylesheet" type="text/css" media="screen, projection, print"
+    href="slidy.css" />
+  <script
+  src="mathjax.js"
+  type="text/javascript"></script>
+  <script src="slidy.js"
+    charset="utf-8" type="text/javascript"></script>
+</head>
+<body>
+<a class="skip-main" href="#slidy-slides">Skip to main content</a>
+<div class="slide titlepage">
+  <h1 class="title"><p>Chapter 4<br />
+Numerical Differentiation and Integration</p></h1>
+  <p class="author">
+<p>Per-Olof Persson<br />
+persson@berkeley.edu</p>
+  </p>
+  <p class="institute">
+<p>Department of Mathematics<br />
+University of California, Berkeley</p>
+  </p>
+  <p class="date">Math 128A Numerical Analysis</p>
+</div>
+<div id="numerical-differentiation" class="slide section level1">
+<h1>Numerical Differentiation</h1>
+<h3 id="forward-and-backward-differences">Forward and Backward
+Differences</h3>
+<p>Inspired by the definition of derivative: <span
+class="math display">\[
+\begin{aligned}
+f&#39;(x_0) = \lim_{h\rightarrow 0} \frac{f(x_0+h)-f(x_0)}{h},
+\end{aligned}
+\]</span> choose a small <span class="math inline">\(h\)</span> and
+approximate <span class="math display">\[
+\begin{aligned}
+f&#39;(x_0) \approx \frac{f(x_0+h)-f(x_0)}{h}
+\end{aligned}
+\]</span> The error term for the linear Lagrange polynomial gives: <span
+class="math display">\[
+\begin{aligned}
+f&#39;(x_0) = \frac{f(x_0+h)-f(x_0)}{h} -\frac{h}{2}f&#39;&#39;(\xi)
+\end{aligned}
+\]</span> Also known as the <em>forward-difference formula</em> if <span
+class="math inline">\(h&gt;0\)</span> and the <em>backward-difference
+formula</em> if <span class="math inline">\(h&lt;0\)</span></p>
+</div>
+<div id="general-derivative-approximations"
+class="slide section level1">
+<h1>General Derivative Approximations</h1>
+<h3 id="differentiation-of-lagrange-polynomials">Differentiation of
+Lagrange Polynomials</h3>
+<p>Differentiate <span class="math display">\[
+\begin{aligned}
+f(x)=\sum_{k=0}^n f(x_k)L_k(x) + \frac{(x-x_0)\cdots (x-x_n)}{(n+1)!}
+  f^{(n+1)}(\xi(x))
+\end{aligned}
+\]</span> to get <span class="math display">\[
+\begin{aligned}
+f&#39;(x_j) = \sum_{k=0}^n f(x_k)L&#39;_k(x_j)+
+\frac{f^{(n+1)}(\xi(x_j))}{(n+1)!}\prod_{k\ne j} (x_j-x_k)
+\end{aligned}
+\]</span> This is the <em><span
+class="math inline">\((n+1)\)</span>-point formula</em> for
+approximating <span class="math inline">\(f&#39;(x_j)\)</span>.</p>
+</div>
+<div id="commonly-used-formulas" class="slide section level1">
+<h1>Commonly Used Formulas</h1>
+<h3 id="section"></h3>
+<p>Using equally spaced points with <span
+class="math inline">\(h=x_{j+1}-x_j\)</span>, we have the
+<em>three-point formulas</em> <span class="math display">\[
+\begin{aligned}
+f&#39;(x_0) &amp;=
+\frac{1}{2h}[-3f(x_0)+4f(x_0+h)-f(x_0+2h)]+\frac{h^2}{3}f^{(3)}(\xi_0)
+\\
+f&#39;(x_0) &amp;= \frac{1}{2h}[-f(x_0-h)+f(x_0+h)] -
+\frac{h^2}{6}f^{(3)}(\xi_1) \\
+f&#39;(x_0) &amp;= \frac{1}{2h}[f(x_0-2h)-4f(x_0-h)+3f(x_0)] +
+\frac{h^2}{3}f^{(3)}(\xi_2) \\
+f&#39;&#39;(x_0) &amp;= \frac{1}{h^2}[f(x_0-h)-2f(x_0)+f(x_0+h)]
+-\frac{h^2}{12}
+f^{(4)}(\xi)
+\end{aligned}
+\]</span> and the <em>five-point formula</em> <span
+class="math display">\[
+\begin{aligned}
+f&#39;(x_0) &amp;=
+\frac{1}{12h}[f(x_0-2h)-8f(x_0-h)+8f(x_0+h)-f(x_0+2h)] \\
+        &amp;+ \frac{h^4}{30} f^{(5)}(\xi)
+\end{aligned}
+\]</span> </p>
+</div>
+<div id="optimal-h" class="slide section level1">
+<h1>Optimal <span class="math inline">\(h\)</span></h1>
+<h3 id="section-1"></h3>
+<ul>
+<li>Consider the three-point central difference formula: <span
+class="math display">\[
+\begin{aligned}
+f&#39;(x_0) = \frac{1}{2h}[f(x_0+h)-f(x_0-h)] -
+\frac{h^2}{6}f^{(3)}(\xi_1)
+\end{aligned}
+\]</span></li>
+<li>Suppose that round-off errors <span
+class="math inline">\(\varepsilon\)</span> are introduced when computing
+<span class="math inline">\(f\)</span>. Then the approximation error is
+<span class="math display">\[
+\begin{aligned}
+\left|f&#39;(x_0)-\frac{\tilde{f}(x_0+h)-\tilde{f}(x_0-h)}{2h}\right|
+\le \frac{\varepsilon}{h}+\frac{h^2}{6}M = e(h)
+\end{aligned}
+\]</span> where <span class="math inline">\(\tilde{f}\)</span> is the
+computed function and <span class="math inline">\(|f^{(3)}(x)|\le
+M\)</span></li>
+<li>Sum of <em>truncation error</em> <span
+class="math inline">\(h^2M/6\)</span> and <em>round-off error</em> <span
+class="math inline">\(\varepsilon/h\)</span></li>
+<li>Minimize <span class="math inline">\(e(h)\)</span> to find the
+optimal <span
+class="math inline">\(h=\sqrt[3]{3\varepsilon/M}\)</span></li>
+</ul>
+</div>
+<div id="richardsons-extrapolation" class="slide section level1">
+<h1>Richardsonâ€™s Extrapolation</h1>
+<h3 id="section-2"></h3>
+<ul>
+<li>Suppose <span class="math inline">\(N(h)\)</span> approximates an
+unknown <span class="math inline">\(M\)</span> with error <span
+class="math display">\[
+\begin{aligned}
+M-N(h) = K_1h + K_2h^2+K_3h^3+\cdots
+\end{aligned}
+\]</span> then an <span class="math inline">\(O(h^j)\)</span>
+approximation is given for <span
+class="math inline">\(j=2,3,\ldots\)</span> by <span
+class="math display">\[
+\begin{aligned}
+N_j(h) = N_{j-1}\left(\frac{h}{2}\right) +
+\frac{N_{j-1}(h/2)-N_{j-1}(h)}{2^{j-1}-1}
+\end{aligned}
+\]</span></li>
+<li>The results can be written in a table:</li>
+</ul>
+<p><span class="math display">\[
+\begin{array}{cccc}
+\hline
+O(h)  &amp; O(h^2)  &amp; O(h^3)  &amp; O(h^4)  \\ \hline
+\textbf{1:} N_1(h)\equiv N(h) \\
+\textbf{2:} N_1(\frac{h}{2})\equiv N(\frac{h}{2}) &amp;
+\textbf{3:} N_2(h) \\
+\textbf{4:} N_1(\frac{h}{4})\equiv N(\frac{h}{4}) &amp;
+\textbf{5:} N_2(\frac{h}{2}) &amp;
+\textbf{6:} N_3(h) \\
+\textbf{7:} N_1(\frac{h}{8})\equiv N(\frac{h}{8}) &amp;
+\textbf{8:} N_2(\frac{h}{4}) &amp;
+\textbf{9:} N_3(\frac{h}{2}) &amp;
+\textbf{10:} N_4(h)
+\end{array}
+\]</span></p>
+</div>
+<div id="richardsons-extrapolation-1" class="slide section level1">
+<h1>Richardsonâ€™s Extrapolation</h1>
+<h3 id="section-3"></h3>
+<ul>
+<li>If some error terms are zero, different and more efficient formulas
+can be derived</li>
+<li>Example: If <span class="math display">\[
+\begin{aligned}
+M-N(h) = K_2h^2+K_4h^4+\cdots
+\end{aligned}
+\]</span> then an <span class="math inline">\(O(h^{2j})\)</span>
+approximation is given for <span
+class="math inline">\(j=2,3,\ldots\)</span> by <span
+class="math display">\[
+\begin{aligned}
+N_j(h) = N_{j-1}\left(\frac{h}{2}\right) +
+\frac{N_{j-1}(h/2)-N_{j-1}(h)}{4^{j-1}-1}
+\end{aligned}
+\]</span></li>
+</ul>
+</div>
+<div id="numerical-quadrature" class="slide section level1">
+<h1>Numerical Quadrature</h1>
+<h3 id="integration-of-lagrange-interpolating-polynomials">Integration
+of Lagrange Interpolating Polynomials</h3>
+<p>Select <span class="math inline">\(\{x_0,\ldots,x_n\}\)</span> in
+<span class="math inline">\([a,b]\)</span> and integrate the Lagrange
+polynomial <span class="math inline">\(P_n(x)=\sum_{i=0}^n
+f(x_i)L_i(x)\)</span> and its truncation error term over <span
+class="math inline">\([a,b]\)</span> to obtain <span
+class="math display">\[
+\begin{aligned}
+\int_a^b f(x)\, dx = \sum_{i=0}^n a_i f(x_i) + E(f)
+\end{aligned}
+\]</span> with <span class="math display">\[
+\begin{aligned}
+a_i = \int_a^b L_i(x)\, dx
+\end{aligned}
+\]</span> and <span class="math display">\[
+\begin{aligned}
+E(f) = \frac{1}{(n+1)!} \int_a^b \prod_{i=0}^n (x-x_i) f^{(n+1)}
+(\xi(x))\,dx
+\end{aligned}
+\]</span></p>
+</div>
+<div id="trapezoidal-and-simpsons-rules" class="slide section level1">
+<h1>Trapezoidal and Simpsonâ€™s Rules</h1>
+<h3 id="the-trapezoidal-rule">The Trapezoidal Rule</h3>
+<p>Linear Lagrange polynomial with <span
+class="math inline">\(x_0=a\)</span>, <span
+class="math inline">\(x_1=b\)</span>, <span
+class="math inline">\(h=b-a\)</span>, gives <span
+class="math display">\[
+\begin{aligned}
+\int_a^b f(x)\,dx = \frac{h}{2}[f(x_0)+f(x_1)]-\frac{h^3}{12}
+f&#39;&#39;(\xi)
+\end{aligned}
+\]</span></p>
+<h3 id="simpsons-rule">Simpsonâ€™s Rule</h3>
+<p>Second Lagrange polynomial with <span
+class="math inline">\(x_0=a\)</span>, <span
+class="math inline">\(x_2=b\)</span>, <span
+class="math inline">\(x_1=a+h\)</span>, <span
+class="math inline">\(h=(b-a)/2\)</span> gives <span
+class="math display">\[
+\begin{aligned}
+\int_{x_0}^{x_2} f(x)\, dx = \frac{h}{3}[f(x_0)+4f(x_1)+f(x_2)]-
+\frac{h^5}{90}f^{(4)}(\xi)
+\end{aligned}
+\]</span></p>
+<h3 id="definition">Definition</h3>
+<p>The <em>degree of accuracy</em>, or <em>precision</em>, of a
+quadrature formula is the largest positive integer <span
+class="math inline">\(n\)</span> such that the formula is exact for
+<span class="math inline">\(x^k\)</span>, for each <span
+class="math inline">\(k=0,1,\ldots, n\)</span>.</p>
+</div>
+<div id="the-newton-cotes-formulas" class="slide section level1">
+<h1>The Newton-Cotes Formulas</h1>
+<h3 id="the-closed-newton-cotes-formulas">The Closed Newton-Cotes
+Formulas</h3>
+<p>Use nodes <span class="math inline">\(x_i=x_0+ih\)</span>, <span
+class="math inline">\(x_0=a\)</span>, <span
+class="math inline">\(x_n=b\)</span>, <span
+class="math inline">\(h=(b-a)/n\)</span>: <span class="math display">\[
+\begin{aligned}
+\int_a^b f(x)\,dx &amp;\approx \sum_{i=0}^n a_i f(x_i) \\
+a_i=\int_{x_0}^{x_n} L_i(x)\,dx &amp;=
+\int_{x_0}^{x_n} \prod_{j\ne i} \frac{(x-x_j)}{(x_i-x_j)}\,dx
+\end{aligned}
+\]</span> <span class="math inline">\(n=1\)</span> gives the Trapezoidal
+rule, <span class="math inline">\(n=2\)</span> gives Simpsonâ€™s rule.</p>
+<h3 id="the-open-newton-cotes-formulas">The Open Newton-Cotes
+Formulas</h3>
+<p>Use nodes <span class="math inline">\(x_i=x_0+ih\)</span>, <span
+class="math inline">\(x_0=a+h\)</span>, <span
+class="math inline">\(x_n=b-h\)</span>, <span
+class="math inline">\(h=(b-a)/(n+2)\)</span>. Setting <span
+class="math inline">\(n=0\)</span> gives the Midpoint rule: <span
+class="math display">\[
+\begin{aligned}
+\int_{x_{-1}}^{x_1} f(x)\,dx = 2hf(x_0)+\frac{h^3}{3} f&#39;&#39;(\xi)
+\end{aligned}
+\]</span></p>
+</div>
+<div id="composite-rules" class="slide section level1">
+<h1>Composite Rules</h1>
+<h3 id="theorem">Theorem</h3>
+<p>Let <span class="math inline">\(f\in C^2[a,b]\)</span>, <span
+class="math inline">\(h=(b-a)/n\)</span>, <span
+class="math inline">\(x_j=a+jh\)</span>, <span
+class="math inline">\(\mu\in(a,b)\)</span>. The <em>Composite
+Trapezoidal rule</em> for <span class="math inline">\(n\)</span>
+subintervals is <span class="math display">\[
+\begin{aligned}
+\int_a^b f(x)\,dx &amp;= \frac{h}{2}
+\left[ f(a)+2\sum_{j=1}^{n-1} f(x_j) + f(b) \right]
+-\frac{b-a}{12} h^2 f&#39;&#39;(\mu)
+\end{aligned}
+\]</span></p>
+<h3 id="theorem-1">Theorem</h3>
+<p>Let <span class="math inline">\(f\in C^4[a,b]\)</span>, <span
+class="math inline">\(n\)</span> even, <span
+class="math inline">\(h=(b-a)/n\)</span>, <span
+class="math inline">\(x_j=a+jh\)</span>, <span
+class="math inline">\(\mu\in(a,b)\)</span>. The <em>Composite Simpsonâ€™s
+rule</em> for <span class="math inline">\(n\)</span> subintervals is
+<span class="math display">\[
+\begin{aligned}
+\int_a^b f(x)\,dx &amp;= \frac{h}{3}
+\left[ f(a)+2\sum_{j=1}^{(n/2)-1} f(x_{2j}) +
+4\sum_{j=1}^{n/2} f(x_{2j-1}) + f(b) \right] \\
+&amp;-\frac{b-a}{180} h^4 f^{(4)}(\mu)
+\end{aligned}
+\]</span></p>
+</div>
+<div id="romberg-integration" class="slide section level1">
+<h1>Romberg Integration</h1>
+<h3 id="section-4"></h3>
+<ul>
+<li>Compute a sequence of <span class="math inline">\(n\)</span>
+integrals using the Composite Trapezoidal rule, where <span
+class="math inline">\(m_1=1, m_2=2, m_3=4, \ldots\)</span> and <span
+class="math inline">\(m_n=2^{n-1}\)</span>.</li>
+<li>The step sizes are then <span
+class="math inline">\(h_k=(b-a)/m_k=(b-a)/2^{k-1}\)</span></li>
+<li>The Trapezoidal rule becomes <span class="math display">\[
+\begin{aligned}
+\int_a^b f(x)\,dx &amp;= \frac{h_k}{2}
+\left[f(a) + f(b) + 2\left(\sum_{i=1}^{2^{k-1}-1}
+f(a+ih_k)\right)\right] \\
+&amp;
+-\frac{(b-a)}{12}h_k^2 f&#39;&#39;(\mu_k)
+\end{aligned}
+\]</span></li>
+</ul>
+</div>
+<div id="romberg-integration-1" class="slide section level1">
+<h1>Romberg Integration</h1>
+<h3 id="section-5"></h3>
+<ul>
+<li>Let <span class="math inline">\(R_{k,1}\)</span> denote the
+trapezoidal approximation, then <span class="math display">\[
+\begin{aligned}
+R_{1,1} &amp;= \frac{h_1}{2}[f(a)+f(b)]=\frac{(b-a)}{2}[f(a)+f(b)] \\
+R_{2,1} &amp;= \frac{1}{2}[R_{1,1}+h_1f(a+h_2)] \\
+R_{3,1} &amp;= \frac{1}{2}\{R_{2,1}+h_2[f(a+h_3)+f(a+3h_3)]\} \\
+R_{k,1} &amp;= \frac{1}{2}\left[ R_{k-1,1}+h_{k-1}
+\sum_{i=1}^{2^{k-2}} f(a+(2i-1)h_k)\right]
+\end{aligned}
+\]</span></li>
+<li>Apply Richardson extrapolation to these values: <span
+class="math display">\[
+\begin{aligned}
+R_{k,j}=R_{k,j-1}+\frac{R_{k,j-1}-R_{k-1,j-1}}{4^{j-1}-1}
+\end{aligned}
+\]</span></li>
+</ul>
+</div>
+<div id="romberg-integration-2" class="slide section level1">
+<h1>Romberg Integration</h1>
+<h3 id="matlab-implementation">MATLAB Implementation</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="va">R</span> <span class="op">=</span> <span class="va">romberg</span>(<span class="va">f</span><span class="op">,</span> <span class="va">a</span><span class="op">,</span> <span class="va">b</span><span class="op">,</span> <span class="va">n</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">% Compute integral of f(x) from a to b using Romberg integration.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="va">h</span> <span class="op">=</span> <span class="va">b</span><span class="op">-</span><span class="va">a</span><span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="va">R</span> <span class="op">=</span> <span class="va">zeros</span>(<span class="va">n</span><span class="op">,</span><span class="va">n</span>)<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="va">R</span>(<span class="fl">1</span><span class="op">,</span><span class="fl">1</span>) <span class="op">=</span> <span class="va">h</span><span class="op">/</span><span class="fl">2</span> <span class="op">*</span> (<span class="va">f</span>(<span class="va">a</span>) <span class="op">+</span> <span class="va">f</span>(<span class="va">b</span>))<span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">i</span> <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="va">n</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="va">R</span>(<span class="va">i</span><span class="op">,</span><span class="fl">1</span>) <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">2</span> <span class="op">*</span> (<span class="va">R</span>(<span class="va">i</span><span class="op">-</span><span class="fl">1</span><span class="op">,</span><span class="fl">1</span>) <span class="op">+</span> <span class="va">h</span><span class="op">*</span><span class="va">sum</span>(<span class="va">f</span>(<span class="va">a</span> <span class="op">+</span> ((<span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">^</span>(<span class="va">i</span><span class="op">-</span><span class="fl">2</span>))<span class="op">-</span><span class="fl">0.5</span>)<span class="op">*</span><span class="va">h</span>)))<span class="op">;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> <span class="va">j</span> <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="va">i</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">R</span>(<span class="va">i</span><span class="op">,</span><span class="va">j</span>) <span class="op">=</span> <span class="va">R</span>(<span class="va">i</span><span class="op">,</span><span class="va">j</span><span class="op">-</span><span class="fl">1</span>) <span class="op">+</span> (<span class="va">R</span>(<span class="va">i</span><span class="op">,</span><span class="va">j</span><span class="op">-</span><span class="fl">1</span>)<span class="op">-</span><span class="va">R</span>(<span class="va">i</span><span class="op">-</span><span class="fl">1</span><span class="op">,</span><span class="va">j</span><span class="op">-</span><span class="fl">1</span>)) <span class="op">/</span> (<span class="fl">4</span><span class="op">^</span>(<span class="va">j</span><span class="op">-</span><span class="fl">1</span>)<span class="op">-</span><span class="fl">1</span>)<span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="va">h</span> <span class="op">=</span> <span class="va">h</span><span class="op">/</span><span class="fl">2</span><span class="op">;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</div>
+<div id="error-estimation" class="slide section level1">
+<h1>Error Estimation</h1>
+<h3 id="section-6"></h3>
+<ul>
+<li>The error term in Simpsonâ€™s rule requires knowledge of <span
+class="math inline">\(f^{(4)}\)</span>: <span class="math display">\[
+\begin{aligned}
+\int_a^b f(x)\,dx = S(a,b) - \frac{h^5}{90}f^{(4)}(\mu)
+\end{aligned}
+\]</span> </li>
+<li>Instead, apply it again with step size <span
+class="math inline">\(h/2\)</span>: <span class="math display">\[
+\begin{aligned}
+\int_a^b f(x)\,dx = S\left(a,\frac{a+b}{2}\right)
++S\left(\frac{a+b}{2},b\right) - \frac{1}{16}
+\left(\frac{h^5}{90}\right)
+f^{(4)}(\tilde{\mu})
+\end{aligned}
+\]</span> </li>
+<li>The assumption <span class="math inline">\(f^{(4)}(\mu)\approx
+f^{(4)}(\tilde{\mu})\)</span> gives the error estimate <span
+class="math display">\[
+\begin{aligned}
+\left|\int_a^b f(x)\,dx - S\left(a,\frac{a+b}{2}\right)
+-S\left(\frac{a+b}{2},b\right)\right| \\
+\approx \frac{1}{15}
+\left| S(a,b) - S\left( a,\frac{a+b}{2}\right)
+-S\left(\frac{a+b}{2},b\right)\right|
+\end{aligned}
+\]</span> </li>
+</ul>
+</div>
+<div id="adaptive-quadrature" class="slide section level1">
+<h1>Adaptive Quadrature</h1>
+<h3 id="section-7"></h3>
+<ul>
+<li>To compute <span class="math inline">\(\int_a^b f(x)\,dx\)</span>
+within a tolerance <span
+class="math inline">\(\varepsilon&gt;0\)</span>, first apply Simpsonâ€™s
+rule with <span class="math inline">\(h=(b-a)/2\)</span> and with <span
+class="math inline">\(h/2\)</span></li>
+<li>If <span class="math display">\[
+\begin{aligned}
+\left|S(a,b) - S\left(a,\frac{a+b}{2}\right) -
+S\left(\frac{a+b}{2},b\right)
+\right| &lt; 15\varepsilon
+\end{aligned}
+\]</span> then the integral is sufficiently accurate</li>
+<li>If not, apply the technique to <span
+class="math inline">\([a,(a+b)/2]\)</span> and <span
+class="math inline">\([(a+b)/2,b]\)</span>, and compute the integral
+within a tolerance of <span
+class="math inline">\(\varepsilon/2\)</span></li>
+<li>Repeat until each portion is within the required tolerance</li>
+</ul>
+</div>
+<div id="gaussian-quadrature" class="slide section level1">
+<h1>Gaussian Quadrature</h1>
+<h3 id="section-8"></h3>
+<ul>
+<li>Basic idea: Calculate both nodes <span
+class="math inline">\(x_1,\ldots,x_n\)</span> and coefficients <span
+class="math inline">\(c_1,\ldots,c_n\)</span> such that <span
+class="math display">\[
+\begin{aligned}
+\int_a^b f(x)\,dx \approx \sum_{i=1}^n c_i f(x_i)
+\end{aligned}
+\]</span></li>
+<li>Since there are <span class="math inline">\(2n\)</span> parameters,
+we might expect a degree of precision of <span
+class="math inline">\(2n-1\)</span></li>
+<li>Example: <span class="math inline">\(n=2\)</span> gives the rule
+<span class="math display">\[
+\begin{aligned}
+\int_{-1}^1 f(x)\,dx \approx f\left(\frac{-\sqrt{3}}{3}\right)
++f\left(\frac{\sqrt{3}}{3}\right)
+\end{aligned}
+\]</span> with degree of precision 3</li>
+</ul>
+</div>
+<div id="legendre-polynomials" class="slide section level1">
+<h1>Legendre Polynomials</h1>
+<h3 id="section-9"></h3>
+<ul>
+<li>The <em>Legendre polynomials</em> <span
+class="math inline">\(P_n(x)\)</span> have the properties
+<ol style="list-style-type: decimal">
+<li>For each <span class="math inline">\(n\)</span>, <span
+class="math inline">\(P_n(x)\)</span> is a monic polynomial of degree
+<span class="math inline">\(n\)</span> (leading coefficient 1)</li>
+<li><span class="math inline">\(\int_{-1}^1 P(x)P_n(x)\,dx=0\)</span>
+when <span class="math inline">\(P(x)\)</span> is a polynomial of degree
+less than <span class="math inline">\(n\)</span></li>
+</ol></li>
+<li>The roots of <span class="math inline">\(P_n(x)\)</span> are
+distinct, in the interval <span class="math inline">\((-1,1)\)</span>,
+and symmetric with respect to the origin.</li>
+<li>Examples: <span class="math display">\[
+\begin{aligned}
+P_0(x)&amp;=1, &amp; P_1(x)&amp;=x \\
+P_2(x)&amp;=x^2-\frac{1}{3} &amp; P_3(x)&amp;=x^3-\frac{3}{5}x \\
+P_4(x)&amp;=x^4-\frac{6}{7}x^2+\frac{3}{35}
+\end{aligned}
+\]</span></li>
+</ul>
+</div>
+<div id="gaussian-quadrature-1" class="slide section level1">
+<h1>Gaussian Quadrature</h1>
+<h3 id="theorem-2">Theorem</h3>
+<p>Suppose <span class="math inline">\(x_1,\ldots,x_n\)</span> are roots
+of <span class="math inline">\(P_n(x)\)</span> and <span
+class="math display">\[
+\begin{aligned}
+c_i = \int_{-1}^1 \prod_{j\ne i}^n \frac{x-x_j}{x_i-x_j}\,dx
+\end{aligned}
+\]</span> If <span class="math inline">\(P(x)\)</span> is any polynomial
+of degree less than <span class="math inline">\(2n\)</span>, then <span
+class="math display">\[
+\begin{aligned}
+\int_{-1}^1 P(x)\,dx = \sum_{i=1}^n c_i P(x_i)
+\end{aligned}
+\]</span></p>
+</div>
+<div id="computing-gaussian-quadrature-coefficients"
+class="slide section level1">
+<h1>Computing Gaussian Quadrature Coefficients</h1>
+<h3 id="matlab-implementation-1">MATLAB Implementation</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> [<span class="va">x</span><span class="op">,</span> <span class="va">c</span>] <span class="op">=</span> <span class="va">gaussquad</span>(<span class="va">n</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">% Compute Gaussian quadrature points and coefficients.</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="va">P</span> <span class="op">=</span> <span class="va">zeros</span>(<span class="va">n</span><span class="op">+</span><span class="fl">1</span><span class="op">,</span><span class="va">n</span><span class="op">+</span><span class="fl">1</span>)<span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="va">P</span>([<span class="fl">1</span><span class="op">,</span><span class="fl">2</span>]<span class="op">,</span><span class="fl">1</span>) <span class="op">=</span> <span class="fl">1</span><span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">k</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">n</span><span class="op">-</span><span class="fl">1</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="va">P</span>(<span class="va">k</span><span class="op">+</span><span class="fl">2</span><span class="op">,</span><span class="fl">1</span><span class="op">:</span><span class="va">k</span><span class="op">+</span><span class="fl">2</span>) <span class="op">=</span> ((<span class="fl">2</span><span class="op">*</span><span class="va">k</span><span class="op">+</span><span class="fl">1</span>)<span class="op">*</span>[<span class="va">P</span>(<span class="va">k</span><span class="op">+</span><span class="fl">1</span><span class="op">,</span><span class="fl">1</span><span class="op">:</span><span class="va">k</span><span class="op">+</span><span class="fl">1</span>) <span class="fl">0</span>] <span class="op">-</span> <span class="op">...</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                    <span class="va">k</span><span class="op">*</span>[<span class="fl">0</span> <span class="fl">0</span> <span class="va">P</span>(<span class="va">k</span><span class="op">,</span><span class="fl">1</span><span class="op">:</span><span class="va">k</span>)]) <span class="op">/</span> (<span class="va">k</span><span class="op">+</span><span class="fl">1</span>)<span class="op">;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="va">x</span> <span class="op">=</span> <span class="va">sort</span>(<span class="va">roots</span>(<span class="va">P</span>(<span class="va">n</span><span class="op">+</span><span class="fl">1</span><span class="op">,</span><span class="fl">1</span><span class="op">:</span><span class="va">n</span><span class="op">+</span><span class="fl">1</span>)))<span class="op">;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="va">A</span> <span class="op">=</span> <span class="va">zeros</span>(<span class="va">n</span><span class="op">,</span><span class="va">n</span>)<span class="op">;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">i</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">n</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="va">A</span>(<span class="va">i</span><span class="op">,:</span>) <span class="op">=</span> <span class="va">polyval</span>(<span class="va">P</span>(<span class="va">i</span><span class="op">,</span><span class="fl">1</span><span class="op">:</span><span class="va">i</span>)<span class="op">,</span><span class="va">x</span>)<span class="op">&#39;;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="va">c</span> <span class="op">=</span> <span class="va">A</span> <span class="op">\</span> [<span class="fl">2</span><span class="op">;</span> <span class="va">zeros</span>(<span class="va">n</span><span class="op">-</span><span class="fl">1</span><span class="op">,</span><span class="fl">1</span>)]<span class="op">;</span></span></code></pre></div>
+</div>
+<div id="arbitrary-intervals" class="slide section level1">
+<h1>Arbitrary Intervals</h1>
+<h3 id="section-10"></h3>
+<p>Transform integrals <span class="math inline">\(\int_a^b
+f(x)\,dx\)</span> into integrals over <span
+class="math inline">\([-1,1]\)</span> by a change of variables: <span
+class="math display">\[
+\begin{aligned}
+t=\frac{2x-a-b}{b-a} \Leftrightarrow x=\frac{1}{2}[(b-a)t+a+b]
+\end{aligned}
+\]</span> Gaussian quadrature then gives <span class="math display">\[
+\begin{aligned}
+\int_a^b f(x)\,dx = \int_{-1}^1 f\left(\frac{(b-a)t+(b+a)}{2}\right)
+\frac{(b-a)}{2}\,dt
+\end{aligned}
+\]</span></p>
+</div>
+<div id="double-integrals" class="slide section level1">
+<h1>Double Integrals</h1>
+<h3 id="section-11"></h3>
+<ul>
+<li>Consider the double integral <span class="math display">\[
+\begin{aligned}
+\iint_R f(x,y)\,dA,\qquad R=\{(x,y)\,|\,a\le x\le b,c\le y \le d \}
+\end{aligned}
+\]</span></li>
+<li>Partition <span class="math inline">\([a,b]\)</span> and <span
+class="math inline">\([c,d]\)</span> into even number of subintervals
+<span class="math inline">\(n,m\)</span></li>
+<li>Step sizes <span class="math inline">\(h=(b-a)/n\)</span> and <span
+class="math inline">\(k=(d-c)/m\)</span></li>
+<li>Write the integral as an iterated integral <span
+class="math display">\[
+\begin{aligned}
+\iint_R f(x,y)\,dA = \int_a^b \left(\int_c^d f(x,y)\,dy\right)\,dx
+\end{aligned}
+\]</span> and use any quadrature rule in an iterated manner.</li>
+</ul>
+</div>
+<div id="composite-simpsons-rule-double-integration"
+class="slide section level1">
+<h1>Composite Simpsonâ€™s Rule Double Integration</h1>
+<h3 id="section-12"></h3>
+<p>The Composite Simpsonâ€™s rule gives <span class="math display">\[
+\begin{aligned}
+\int_a^b \left(\int_c^d f(x,y)\,dy\right)\,dx
+= \frac{hk}{9} \sum_{i=0}^n \sum_{j=0}^m
+w_{i,j} f(x_i,y_j) + E
+\end{aligned}
+\]</span> where <span class="math inline">\(x_i=a+ih\)</span>, <span
+class="math inline">\(y_j=c+jk\)</span>, <span
+class="math inline">\(w_{i,j}\)</span> are the products of the nested
+Composite Simpsonâ€™s rule coefficients (see below), and the error is
+<span class="math display">\[
+\begin{aligned}
+E=-\frac{(d-c)(b-a)}{180}\left[h^4\frac{\partial^4 f}{\partial x^4}
+(\bar{\eta},\bar{\mu}) + k^4\frac{\partial^4 f}{\partial y^4}
+(\hat{\eta},\hat{\mu})\right]
+\end{aligned}
+\]</span></p>
+<!-- $$ -->
+<!-- \begin{array}{r|l|l|l|l|l|} -->
+<!-- \cline{2-6} -->
+<!-- d & {\footnotesize 1} \  & 4  & 2  & 4 & 1 \\ -->
+<!-- \cline{2-6} -->
+<!--     & 4 & 16  & 8  & 16 & 4 \\ -->
+<!-- \cline{2-6} -->
+<!-- c & 1\  & 4  & 2  & 4 & 1 \\ -->
+<!-- \cline{2-6} -->
+<!-- \multicolumn{1}{r}{} & -->
+<!-- \multicolumn{1}{c}{a} & -->
+<!-- \multicolumn{1}{c}{} & -->
+<!-- \multicolumn{1}{c}{} & -->
+<!-- \multicolumn{1}{c}{} & -->
+<!-- \multicolumn{1}{c}{d} -->
+<!-- \end{array} -->
+<!-- $$ -->
+<p><span class="math display">\[
+\begin{array}{rlllll}
+d &amp; \bullet 1\  &amp; \bullet 4  &amp; \bullet 2  &amp; \bullet 4
+&amp; \bullet 1 \\ \ \\
+    &amp; \bullet 4 &amp; \bullet 16  &amp; \bullet 8  &amp; \bullet 16
+&amp; \bullet 4 \\ \ \\
+c &amp; \bullet 1\  &amp; \bullet 4  &amp; \bullet 2  &amp; \bullet 4
+&amp; \bullet 1 \\
+    &amp; a &amp; &amp; &amp; &amp; b
+\end{array}
+\]</span></p>
+<!-- $$ -->
+<!-- \setlength{\unitlength}{1.3cm} -->
+<!-- \begin{picture}(4.3,2.3)(-0.2,-0.2) -->
+<!-- \linethickness{0.075mm} -->
+<!-- \multiput(0,0)(1,0){5}% -->
+<!-- {\line(0,1){2}} -->
+<!-- \multiput(0,0)(0,1){3}% -->
+<!-- {\line(1,0){4}} -->
+<!-- \put(-0.25,1.95){$d$} -->
+<!-- \put(-0.25,-0.05){$c$} -->
+<!-- \put(-0.05,-0.25){$a$} -->
+<!-- \put(3.95,-0.25){$b$} -->
+<!-- \put(0.05,0.05){{\footnotesize 1}} -->
+<!-- \put(1.05,0.05){{\footnotesize 4}} -->
+<!-- \put(2.05,0.05){{\footnotesize 2}} -->
+<!-- \put(3.05,0.05){{\footnotesize 4}} -->
+<!-- \put(4.05,0.05){{\footnotesize 1}} -->
+<!-- \put(0.05,1.05){{\footnotesize 4}} -->
+<!-- \put(1.05,1.05){{\footnotesize 16}} -->
+<!-- \put(2.05,1.05){{\footnotesize 8}} -->
+<!-- \put(3.05,1.05){{\footnotesize 16}} -->
+<!-- \put(4.05,1.05){{\footnotesize 4}} -->
+<!-- \put(0.05,2.05){{\footnotesize 1}} -->
+<!-- \put(1.05,2.05){{\footnotesize 4}} -->
+<!-- \put(2.05,2.05){{\footnotesize 2}} -->
+<!-- \put(3.05,2.05){{\footnotesize 4}} -->
+<!-- \put(4.05,2.05){{\footnotesize 1}} -->
+<!-- \end{picture} -->
+<!-- $$ -->
+<!-- <div> -->
+<!-- ![](fig1.png){ width=500 } -->
+<!-- </div> -->
+<!-- \begin{center} -->
+<!-- \includegraphics[width=.5\textwidth]{fig1.pdf} -->
+<!-- \end{center} -->
+</div>
+<div id="non-rectangular-regions" class="slide section level1">
+<h1>Non-Rectangular Regions</h1>
+<h3 id="section-13"></h3>
+<p>The same technique can be applied to double integrals of the form
+<span class="math display">\[
+\begin{aligned}
+\int_a^b \int_{c(x)}^{d(x)} f(x,y)\,dy\,dx
+\end{aligned}
+\]</span> The step size for <span class="math inline">\(x\)</span> is
+still <span class="math inline">\(h=(b-a)/n\)</span>, but for <span
+class="math inline">\(y\)</span> it varies with <span
+class="math inline">\(x\)</span>: <span class="math display">\[
+\begin{aligned}
+k(x) = \frac{d(x)-c(x)}{m}
+\end{aligned}
+\]</span></p>
+</div>
+<div id="gaussian-double-integration" class="slide section level1">
+<h1>Gaussian Double Integration</h1>
+<h3 id="section-14"></h3>
+<ul>
+<li>For Guassian integration, first transform the roots <span
+class="math inline">\(r_{n,j}\)</span> from <span
+class="math inline">\([-1,1]\)</span> to <span
+class="math inline">\([a,b]\)</span> and <span
+class="math inline">\([c,d]\)</span>, respectively</li>
+<li>The integral is then <span class="math display">\[
+\begin{aligned}
+\int_a^b \int_c^d f(x,y)\,dy\,dx \approx
+\frac{(b-a)(d-c)}{4}\sum_{i=1}^n \sum_{j=1}^n c_{n,i} c_{n,j}
+f(x_i,y_j)
+\end{aligned}
+\]</span></li>
+<li>Similar techniques can be used for non-rectangular regions</li>
+</ul>
+</div>
+<div id="improper-integrals-with-a-singularity"
+class="slide section level1">
+<h1>Improper Integrals with a Singularity</h1>
+<h3 id="section-15"></h3>
+<p>The improper integral below, with a singularity at the left endpoint,
+converges if and only if <span
+class="math inline">\(0&lt;p&lt;1\)</span> and then <span
+class="math display">\[
+\begin{aligned}
+\int_a^b \frac{1}{(x-a)^p}dx = \left.\frac{(x-a)^{1-p}}{1-p}\right|_a^b
+=\frac{(b-a)^{1-p}}{1-p}
+\end{aligned}
+\]</span> More generally, if <span class="math display">\[
+\begin{aligned}
+f(x)=\frac{g(x)}{(x-a)^p},\quad 0&lt;p&lt;1,\quad g\text{ continuous on
+}[a,b],
+\end{aligned}
+\]</span> construct the fourth Taylor polynomial <span
+class="math inline">\(P_4(x)\)</span> for <span
+class="math inline">\(g\)</span> about <span
+class="math inline">\(a\)</span>: <span class="math display">\[
+\begin{aligned}
+P_4(x)&amp;=g(a)+g&#39;(a)(x-a)+\frac{g&#39;&#39;(a)}{2!}(x-a)^2 \\
+&amp;+\frac{g&#39;&#39;&#39;(a)}{3!}(x-a)^3 +
+\frac{g^{(4)}(a)}{4!}(x-a)^4
+\end{aligned}
+\]</span></p>
+</div>
+<div id="improper-integrals-with-a-singularity-1"
+class="slide section level1">
+<h1>Improper Integrals with a Singularity</h1>
+<h3 id="section-16"></h3>
+<p>and write <span class="math display">\[
+\begin{aligned}
+\int_a^b f(x)\,dx = \int_a^b \frac{g(x)-P_4(x)}{(x-a)^p}dx
++\int_a^b \frac{P_4(x)}{(x-a)^p}dx
+\end{aligned}
+\]</span> The second integral can be computed exactly: <span
+class="math display">\[
+\begin{aligned}
+\int_a^b \frac{P_4(x)}{(x-a)^p}dx &amp;=
+\sum_{k=0}^4 \int_a^b \frac{g^{(k)}(a)}{k!}(x-a)^{k-p}\,dx \\
+&amp;= \sum_{k=0}^4 \frac{g^{(k)}(a)}{k!(k+1-p)}(b-a)^{k+1-p}
+\end{aligned}
+\]</span></p>
+</div>
+<div id="improper-integrals-with-a-singularity-2"
+class="slide section level1">
+<h1>Improper Integrals with a Singularity</h1>
+<h3 id="section-17"></h3>
+<p>For the first integral, use the Composite Simpsonâ€™s rule to compute
+the integral of <span class="math inline">\(G\)</span> on <span
+class="math inline">\([a,b]\)</span>, where <span
+class="math display">\[
+\begin{aligned}
+G(x)=
+\begin{cases}
+\frac{g(x)-P_4(x)}{(x-a)^p}, &amp; \text{if }a&lt;x\le b \\
+0, &amp; \text{if }x=a
+\end{cases}
+\end{aligned}
+\]</span> Note that <span class="math inline">\(0&lt;p&lt;1\)</span> and
+<span class="math inline">\(P_4^{(k)}(a)\)</span> agrees with <span
+class="math inline">\(g^{(k)}(a)\)</span> for each <span
+class="math inline">\(k=0,1,2,3,4\)</span>, so <span
+class="math inline">\(G\in C^4[a,b]\)</span> and Simpsonâ€™s rule can be
+applied.</p>
+</div>
+<div id="singularity-at-the-right-endpoint"
+class="slide section level1">
+<h1>Singularity at the Right Endpoint</h1>
+<h3 id="section-18"></h3>
+<ul>
+<li>For an improper integral with a singularity at the right endpoint
+<span class="math inline">\(b\)</span>, make the substitution <span
+class="math inline">\(z=-x\)</span>, <span
+class="math inline">\(dz=-dx\)</span> to obtain <span
+class="math display">\[
+\begin{aligned}
+\int_a^b f(x)\,dx = \int_{-b}^{-a} f(-z)\,dz
+\end{aligned}
+\]</span> which has its singularity at the left endpoint</li>
+<li>For an improper integral with a singularity at <span
+class="math inline">\(c\)</span>, where <span
+class="math inline">\(a&lt;c&lt;b\)</span>, split into two improper
+integrals <span class="math display">\[
+\begin{aligned}
+\int_a^b f(x)\,dx = \int_a^c f(x)\,dx + \int_c^b f(x)\,dx
+\end{aligned}
+\]</span></li>
+</ul>
+</div>
+<div id="infinite-limits-of-integration" class="slide section level1">
+<h1>Infinite Limits of Integration</h1>
+<h3 id="section-19"></h3>
+<p>An integral of the form <span class="math inline">\(\int_a^\infty
+\frac{1}{x^p}dx\)</span>, with <span
+class="math inline">\(p&gt;1\)</span>, can be converted to an integral
+with left endpoint singularity at <span class="math inline">\(0\)</span>
+by the substitution <span class="math display">\[
+\begin{aligned}
+t=x^{-1},\quad dt=-x^{-2}\,dx, \text{  so  }dx=-x^2 dt=-t^{-2}dt
+\end{aligned}
+\]</span> which gives <span class="math display">\[
+\begin{aligned}
+\int_a^\infty \frac{1}{x^p} dx = \int_{1/a}^0
+-\frac{t^p}{t^2}dt=\int_0^{1/a}\frac{1}{t^{2-p}}dt
+\end{aligned}
+\]</span> More generally, this variable change converts <span
+class="math inline">\(\int_a^\infty f(x)\,dx\)</span> into <span
+class="math display">\[
+\begin{aligned}
+\int_a^\infty f(x)\,dx = \int_0^{1/a} t^{-2}
+f\left(\frac{1}{t}\right)\,dt
+\end{aligned}
+\]</span></p>
+</div>
+</body>
+</html>
+

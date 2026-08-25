@@ -1,0 +1,713 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Chapter 2 Solutions of Equations in One Variable</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; } /* Alert */
+    code span.an { color: #008000; } /* Annotation */
+    code span.at { } /* Attribute */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #0000ff; } /* ControlFlow */
+    code span.ch { color: #008080; } /* Char */
+    code span.cn { } /* Constant */
+    code span.co { color: #008000; } /* Comment */
+    code span.cv { color: #008000; } /* CommentVar */
+    code span.do { color: #008000; } /* Documentation */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.im { } /* Import */
+    code span.in { color: #008000; } /* Information */
+    code span.kw { color: #0000ff; } /* Keyword */
+    code span.op { } /* Operator */
+    code span.ot { color: #ff4000; } /* Other */
+    code span.pp { color: #ff4000; } /* Preprocessor */
+    code span.sc { color: #008080; } /* SpecialChar */
+    code span.ss { color: #008080; } /* SpecialString */
+    code span.st { color: #008080; } /* String */
+    code span.va { } /* Variable */
+    code span.vs { color: #008080; } /* VerbatimString */
+    code span.wa { color: #008000; font-weight: bold; } /* Warning */
+    .skip-main {
+        position: absolute;
+        top: -1000px;
+        left: -1000px;
+        height: 1px;
+        width: 1px;
+        text-align: left;
+        overflow: hidden;
+    }
+    .skip-main:focus, .skip-main:active {
+        top: 0;
+        left: 0;
+        height: auto;
+        width: auto;
+        padding: 10px;
+        background: #fff;
+        z-index: 1000;
+        border: 2px solid #000;
+    }
+    /* Contrast fixes for code highlighting and body text */
+    body { color: #000 !important; }
+    pre.numberSource code > span > a:first-child::before { color: #767676 !important; }
+    pre.numberSource { border-left: 1px solid #767676 !important; }
+    code span.co { color: #006600 !important; }
+    code span.ot { color: #bc3f00 !important; }
+    code span.pp { color: #bc3f00 !important; }
+    code span.er { color: #d00000 !important; font-weight: bold; }
+    code span.al { color: #d00000 !important; }
+  </style>
+  <link rel="stylesheet" type="text/css" media="screen, projection, print"
+    href="slidy.css" />
+  <script
+  src="mathjax.js"
+  type="text/javascript"></script>
+  <script src="slidy.js"
+    charset="utf-8" type="text/javascript"></script>
+</head>
+<body>
+<a class="skip-main" href="#slidy-slides">Skip to main content</a>
+<div class="slide titlepage">
+  <h1 class="title"><p>Chapter 2<br />
+Solutions of Equations in One Variable</p></h1>
+  <p class="author">
+<p>Per-Olof Persson<br />
+persson@berkeley.edu</p>
+  </p>
+  <p class="institute">
+<p>Department of Mathematics<br />
+University of California, Berkeley</p>
+  </p>
+  <p class="date">Math 128A Numerical Analysis</p>
+</div>
+<div id="the-bisection-method" class="slide section level1">
+<h1>The Bisection Method</h1>
+<h3 id="the-bisection-method-1">The Bisection Method</h3>
+<ul>
+<li>Suppose <span class="math inline">\(f\)</span> continuous on <span
+class="math inline">\([a,b]\)</span>, and <span
+class="math inline">\(f(a),f(b)\)</span> opposite signs</li>
+<li>By the IVT, there exists an <span class="math inline">\(x\)</span>
+in <span class="math inline">\((a,b)\)</span> with <span
+class="math inline">\(f(x)=0\)</span></li>
+<li>Divide the interval <span class="math inline">\([a,b]\)</span> by
+computing the midpoint <span class="math display">\[
+p = (a+b)/2
+\]</span></li>
+<li>If <span class="math inline">\(f(p)\)</span> has same sign as <span
+class="math inline">\(f(a)\)</span>, consider new interval <span
+class="math inline">\([p,b]\)</span></li>
+<li>If <span class="math inline">\(f(p)\)</span> has same sign as <span
+class="math inline">\(f(b)\)</span>, consider new interval <span
+class="math inline">\([a,p]\)</span></li>
+<li>Repeat until interval small enough to approximate <span
+class="math inline">\(x\)</span> well</li>
+</ul>
+</div>
+<div id="the-bisection-method-implementation"
+class="slide section level1">
+<h1>The Bisection Method â€“ Implementation</h1>
+<h3 id="matlab-implementation">MATLAB Implementation</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="va">p</span> <span class="op">=</span> <span class="va">bisection</span>(<span class="va">f</span><span class="op">,</span> <span class="va">a</span><span class="op">,</span> <span class="va">b</span><span class="op">,</span> <span class="va">tol</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">% Solve f(p) = 0 using the bisection method.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">while</span> <span class="fl">1</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">p</span> <span class="op">=</span> (<span class="va">a</span><span class="op">+</span><span class="va">b</span>) <span class="op">/</span> <span class="fl">2</span><span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="va">p</span><span class="op">-</span><span class="va">a</span> <span class="op">&lt;</span> <span class="va">tol</span><span class="op">,</span> <span class="kw">break</span><span class="op">;</span> <span class="kw">end</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="va">f</span>(<span class="va">a</span>)<span class="op">*</span><span class="va">f</span>(<span class="va">p</span>) <span class="op">&gt;</span> <span class="fl">0</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">a</span> <span class="op">=</span> <span class="va">p</span><span class="op">;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">else</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">b</span> <span class="op">=</span> <span class="va">p</span><span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</div>
+<div id="bisection-method" class="slide section level1">
+<h1>Bisection Method</h1>
+<h3 id="termination-criteria">Termination Criteria</h3>
+<ul>
+<li>Many ways to decide when to stop: <span class="math display">\[
+\begin{aligned}
+|p_N-p_{N-1}| &lt; \varepsilon \\
+\frac{|p_N-p_{N-1}|}{|p_N|} &lt; \varepsilon \\
+|f(p_N)| &lt; \varepsilon
+\end{aligned}
+\]</span></li>
+<li>None is perfect, use a combination in real software</li>
+</ul>
+</div>
+<div id="convergence" class="slide section level1">
+<h1>Convergence</h1>
+<h3 id="theorem">Theorem</h3>
+<p>Suppose that <span class="math inline">\(f\in C[a,b]\)</span> and
+<span class="math inline">\(f(a)\cdot f(b)&lt;0\)</span>. The Bisection
+method generates a sequence <span
+class="math inline">\(\{p_n\}_{n=1}^\infty\)</span> approximating a zero
+<span class="math inline">\(p\)</span> of <span
+class="math inline">\(f\)</span> with <span class="math display">\[
+|p_n-p| \le \frac{b-a}{2^n},\qquad\text{when }n\ge 1.
+\]</span></p>
+<h3 id="convergence-rate">Convergence Rate</h3>
+<ul>
+<li>The sequence <span
+class="math inline">\(\{p_n\}_{n=1}^\infty\)</span> converges to <span
+class="math inline">\(p\)</span> with rate of convergence <span
+class="math inline">\(O(1/2^n)\)</span>: <span class="math display">\[
+p_n = p + O\left( \frac{1}{2^n} \right).
+\]</span></li>
+</ul>
+</div>
+<div id="fixed-points" class="slide section level1">
+<h1>Fixed Points</h1>
+<h3 id="fixed-points-and-root-finding">Fixed Points and
+Root-Finding</h3>
+<ul>
+<li>A number <span class="math inline">\(p\)</span> is a <em>fixed
+point</em> for a given function <span class="math inline">\(g\)</span>
+if <span class="math inline">\(g(p)=p\)</span></li>
+<li>Given a root-finding problem <span
+class="math inline">\(f(p)=0\)</span>, there are many <span
+class="math inline">\(g\)</span> with fixed points at <span
+class="math inline">\(p\)</span>: <span class="math display">\[
+\begin{aligned}
+g(x) &amp;= x-f(x) \\
+g(x) &amp;= x+3f(x) \\
+\ldots
+\end{aligned}
+\]</span></li>
+<li>If <span class="math inline">\(g\)</span> has fixed point at <span
+class="math inline">\(p\)</span>, then <span
+class="math inline">\(f(x)=x-g(x)\)</span> has a zero at <span
+class="math inline">\(p\)</span></li>
+</ul>
+</div>
+<div id="existence-and-uniqueness-of-fixed-points"
+class="slide section level1">
+<h1>Existence and Uniqueness of Fixed Points</h1>
+<h3 id="theorem-1">Theorem</h3>
+<ol style="list-style-type: lower-alpha">
+<li>If <span class="math inline">\(g\in C[a,b]\)</span> and <span
+class="math inline">\(g(x)\in[a,b]\)</span> for all <span
+class="math inline">\(x\in[a,b]\)</span>, then <span
+class="math inline">\(g\)</span> has a fixed point in <span
+class="math inline">\([a,b]\)</span></li>
+<li>If, in addition, <span class="math inline">\(g&#39;(x)\)</span>
+exists on <span class="math inline">\((a,b)\)</span> and a positive
+constant <span class="math inline">\(k&lt;1\)</span> exists with <span
+class="math display">\[
+|g&#39;(x)|\le k, \qquad \text{for all } x\in (a,b),
+\]</span> then the fixed point in <span
+class="math inline">\([a,b]\)</span> is unique.</li>
+</ol>
+</div>
+<div id="fixed-point-iteration" class="slide section level1">
+<h1>Fixed-Point Iteration</h1>
+<h3 id="fixed-point-iteration-1">Fixed-Point Iteration</h3>
+<ul>
+<li>For initial <span class="math inline">\(p_0\)</span>, generate
+sequence <span class="math inline">\(\{p_n\}_{n=0}^\infty\)</span> by
+<span class="math inline">\(p_n=g(p_{n-1})\)</span>.</li>
+<li>If the sequence converges to <span class="math inline">\(p\)</span>,
+then <span class="math display">\[
+p = \lim_{n\rightarrow\infty} p_n =
+\lim_{n\rightarrow\infty} g(p_{n-1}) =
+g\left(\lim_{n\rightarrow\infty} p_{n-1} \right) = g(p).
+\]</span></li>
+</ul>
+<h3 id="matlab-implementation-1">MATLAB Implementation</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="va">p</span> <span class="op">=</span> <span class="va">fixedpoint</span>(<span class="va">g</span><span class="op">,</span> <span class="va">p0</span><span class="op">,</span> <span class="va">tol</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">% Solve g(p) = p using fixed-point iteration.</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">while</span> <span class="fl">1</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">p</span> <span class="op">=</span> <span class="va">g</span>(<span class="va">p0</span>)<span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="va">abs</span>(<span class="va">p</span><span class="op">-</span><span class="va">p0</span>) <span class="op">&lt;</span> <span class="va">tol</span><span class="op">,</span> <span class="kw">break</span><span class="op">;</span> <span class="kw">end</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="va">p0</span> <span class="op">=</span> <span class="va">p</span><span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</div>
+<div id="convergence-of-fixed-point-iteration"
+class="slide section level1">
+<h1>Convergence of Fixed-Point Iteration</h1>
+<h3 id="theorem-fixed-point-theorem">Theorem (Fixed-Point Theorem)</h3>
+<p>Let <span class="math inline">\(g\in C[a,b]\)</span> be such that
+<span class="math inline">\(g(x)\in[a,b]\)</span>, for all <span
+class="math inline">\(x\)</span> in <span
+class="math inline">\([a,b]\)</span>. Suppose, in addition, that <span
+class="math inline">\(g&#39;\)</span> exists on <span
+class="math inline">\((a,b)\)</span> and that a constant <span
+class="math inline">\(0&lt;k&lt;1\)</span> exists with <span
+class="math display">\[
+|g&#39;(x)|\le k,\qquad \text{for all }x\in(a,b).
+\]</span> Then, for any number <span class="math inline">\(p_0\)</span>
+in <span class="math inline">\([a,b]\)</span>, the sequence defined by
+<span class="math inline">\(p_n = g(p_{n-1})\)</span> converges to the
+unique fixed point <span class="math inline">\(p\)</span> in <span
+class="math inline">\([a,b]\)</span>.</p>
+<h3 id="corollary">Corollary</h3>
+<p>If <span class="math inline">\(g\)</span> satisfies the hypotheses
+above, then bounds for the error are given by <span
+class="math display">\[
+\begin{aligned}
+|p_n-p| &amp;\le k^n \max \{p_0 - a, b - p_0 \} \\
+|p_n-p| &amp;\le \frac{k^n}{1-k} |p_1-p_0|
+\end{aligned}
+\]</span></p>
+</div>
+<div id="newtons-method" class="slide section level1">
+<h1>Newtonâ€™s Method</h1>
+<h3 id="taylor-polynomial-derivation">Taylor Polynomial Derivation</h3>
+<p>Suppose <span class="math inline">\(f\in C^2[a,b]\)</span> and <span
+class="math inline">\(p_0\in[a,b]\)</span> approximates solution <span
+class="math inline">\(p\)</span> of <span
+class="math inline">\(f(x)=0\)</span> with <span
+class="math inline">\(f&#39;(p_0)\ne 0\)</span>. Expand <span
+class="math inline">\(f(x)\)</span> about <span
+class="math inline">\(p_0\)</span>: <span class="math display">\[
+f(p) = f(p_0) + (p-p_0)f&#39;(p_0) + \frac{(p-p_0)^2}{2}
+f&#39;&#39;(\xi(p))
+\]</span> Set <span class="math inline">\(f(p)=0\)</span>, assume <span
+class="math inline">\((p-p_0)^2\)</span> negligible: <span
+class="math display">\[
+p \approx p_1 = p_0 - \frac{f(p_0)}{f&#39;(p_0)}
+\]</span> This gives the sequence <span
+class="math inline">\(\{p_n\}_{n=0}^\infty\)</span>: <span
+class="math display">\[
+p_n = p_{n-1} - \frac{f(p_{n-1})}{f&#39;(p_{n-1})}
+\]</span></p>
+</div>
+<div id="newtons-method-1" class="slide section level1">
+<h1>Newtonâ€™s Method</h1>
+<h3 id="matlab-implementation-2">MATLAB Implementation</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="va">p</span> <span class="op">=</span> <span class="va">newton</span>(<span class="va">f</span><span class="op">,</span> <span class="va">df</span><span class="op">,</span> <span class="va">p0</span><span class="op">,</span> <span class="va">tol</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">% Solve f(p) = 0 using Newton&#39;s method.</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">while</span> <span class="fl">1</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">p</span> <span class="op">=</span> <span class="va">p0</span> <span class="op">-</span> <span class="va">f</span>(<span class="va">p0</span>)<span class="op">/</span><span class="va">df</span>(<span class="va">p0</span>)<span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="va">abs</span>(<span class="va">p</span><span class="op">-</span><span class="va">p0</span>) <span class="op">&lt;</span> <span class="va">tol</span><span class="op">,</span> <span class="kw">break</span><span class="op">;</span> <span class="kw">end</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="va">p0</span> <span class="op">=</span> <span class="va">p</span><span class="op">;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</div>
+<div id="newtons-method-convergence" class="slide section level1">
+<h1>Newtonâ€™s Method â€“ Convergence</h1>
+<h3 id="fixed-point-formulation">Fixed Point Formulation</h3>
+<p>Newtonâ€™s method is fixed point iteration <span
+class="math inline">\(p_n=g(p_{n-1})\)</span> with <span
+class="math display">\[
+g(x) = x - \frac{f(x)}{f&#39;(x)}
+\]</span></p>
+<h3 id="theorem-2">Theorem</h3>
+<p>Let <span class="math inline">\(f\in C^2[a,b]\)</span>. If <span
+class="math inline">\(p\in [a,b]\)</span> is such that <span
+class="math inline">\(f(p)=0\)</span> and <span
+class="math inline">\(f&#39;(p)\ne 0\)</span>, then there exists a <span
+class="math inline">\(\delta &gt;0\)</span> such that Newtonâ€™s method
+generates a sequence <span
+class="math inline">\(\{p_n\}_{n=1}^\infty\)</span> converging to <span
+class="math inline">\(p\)</span> for any initial approximation <span
+class="math inline">\(p_0\in[p-\delta,p+\delta]\)</span>.</p>
+</div>
+<div id="variations-without-derivatives" class="slide section level1">
+<h1>Variations without Derivatives</h1>
+<h3 id="the-secant-method">The Secant Method</h3>
+<p>Replace the derivative in Newtonâ€™s method by <span
+class="math display">\[
+f&#39;(p_{n-1}) \approx \frac{f(p_{n-2})-f(p_{n-1})}{p_{n-2}-p_{n-1}}
+\]</span> to get <span class="math display">\[
+p_n = p_{n-1}-\frac{f(p_{n-1})(p_{n-1}-p_{n-2})}{f(p_{n-1})-f(p_{n-2})}
+\]</span></p>
+<h3 id="the-method-of-false-position-regula-falsi">The Method of False
+Position (Regula Falsi)</h3>
+<p>Like the Secant method, but with a test to ensure the root is
+bracketed between iterations.</p>
+</div>
+<div id="order-of-convergence" class="slide section level1">
+<h1>Order of Convergence</h1>
+<h3 id="definition">Definition</h3>
+<p>Suppose <span class="math inline">\(\{p_n\}_{n=0}^\infty\)</span> is
+a sequence that converges to <span class="math inline">\(p\)</span>,
+with <span class="math inline">\(p_n\ne p\)</span> for all <span
+class="math inline">\(n\)</span>. If positive constants <span
+class="math inline">\(\lambda\)</span> and <span
+class="math inline">\(\alpha\)</span> exist with <span
+class="math display">\[
+\lim_{n\rightarrow\infty} \frac{|p_{n+1}-p|}{|p_n-p|^\alpha} = \lambda,
+\]</span> then <span class="math inline">\(\{p_n\}_{n=0}^\infty\)</span>
+<em>converges to <span class="math inline">\(p\)</span> of order <span
+class="math inline">\(\alpha\)</span>, with asymptotic error constant
+<span class="math inline">\(\lambda\)</span></em>.</p>
+<p>An iterative technique <span
+class="math inline">\(p_n=g(p_{n-1})\)</span> is said to be of <em>order
+<span class="math inline">\(\alpha\)</span></em> if the sequence <span
+class="math inline">\(\{p_n\}_{n=0}^\infty\)</span> converges to the
+solution <span class="math inline">\(p=g(p)\)</span> of order <span
+class="math inline">\(\alpha\)</span>.</p>
+<h3 id="special-cases">Special cases</h3>
+<ul>
+<li>If <span class="math inline">\(\alpha=1\)</span> (and <span
+class="math inline">\(\lambda&lt;1\)</span>), the sequence is
+<em>linearly convergent</em></li>
+<li>If <span class="math inline">\(\alpha=2\)</span>, the sequence is
+<em>quadratically convergent</em></li>
+</ul>
+</div>
+<div id="fixed-point-convergence" class="slide section level1">
+<h1>Fixed Point Convergence</h1>
+<h3 id="theorem-3">Theorem</h3>
+<p>Let <span class="math inline">\(g\in C[a,b]\)</span> be such that
+<span class="math inline">\(g(x)\in[a,b]\)</span>, for all <span
+class="math inline">\(x\in[a,b]\)</span>. Suppose <span
+class="math inline">\(g&#39;\)</span> is continuous on <span
+class="math inline">\((a,b)\)</span> and that <span
+class="math inline">\(0&lt;k&lt;1\)</span> exists with <span
+class="math inline">\(|g&#39;(x)|\le k\)</span> for all <span
+class="math inline">\(x\in(a,b)\)</span>. If <span
+class="math inline">\(g&#39;(p)\ne 0\)</span>, then for any number <span
+class="math inline">\(p_0\)</span> in <span
+class="math inline">\([a,b]\)</span>, the sequence <span
+class="math inline">\(p_n=g(p_{n-1})\)</span> converges only linearly to
+the unique fixed point <span class="math inline">\(p\)</span> in <span
+class="math inline">\([a,b]\)</span>.</p>
+<h3 id="theorem-4">Theorem</h3>
+<p>Let <span class="math inline">\(p\)</span> be solution of <span
+class="math inline">\(x=g(x)\)</span>. Suppose <span
+class="math inline">\(g&#39;(p)=0\)</span> and <span
+class="math inline">\(g&#39;&#39;\)</span> continuous with <span
+class="math inline">\(|g&#39;&#39;(x)|&lt;M\)</span> on open interval
+<span class="math inline">\(I\)</span> containing <span
+class="math inline">\(p\)</span>. Then there exists <span
+class="math inline">\(\delta&gt;0\)</span> s.t. for <span
+class="math inline">\(p_0\in[p-\delta,p+\delta]\)</span>, the sequence
+defined by <span class="math inline">\(p_n=g(p_{n-1})\)</span> converges
+at least quadratically to <span class="math inline">\(p\)</span>, and
+<span class="math display">\[
+|p_{n+1}-p| &lt; \frac{M}{2}|p_n-p|^2.
+\]</span></p>
+</div>
+<div id="newtons-method-as-fixed-point-problem"
+class="slide section level1">
+<h1>Newtonâ€™s Method as Fixed-Point Problem</h1>
+<h3 id="derivation">Derivation</h3>
+<p>Seek <span class="math inline">\(g\)</span> of the form <span
+class="math display">\[
+g(x) = x-\phi(x)f(x).
+\]</span> Find differentiable <span class="math inline">\(\phi\)</span>
+giving <span class="math inline">\(g&#39;(p)=0\)</span> when <span
+class="math inline">\(f(p)=0\)</span>: <span class="math display">\[
+\begin{aligned}
+g&#39;(x) &amp;= 1 - \phi&#39;(x)f(x) - f&#39;(x)\phi(x) \\
+g&#39;(p) &amp;= 1 - \phi&#39;(p)\cdot 0 - f&#39;(p) \phi(p)
+\end{aligned}
+\]</span> and <span class="math inline">\(g&#39;(p)=0\)</span> if and
+only if <span class="math inline">\(\phi(p) = 1/f&#39;(p)\)</span>. This
+gives Newtonâ€™s method <span class="math display">\[
+p_n = g(p_{n-1}) = p_{n-1} - \frac{f(p_{n-1})}{f&#39;(p_{n-1})}
+\]</span></p>
+</div>
+<div id="multiplicity-of-zeros" class="slide section level1">
+<h1>Multiplicity of Zeros</h1>
+<h3 id="definition-1">Definition</h3>
+<p>A solution <span class="math inline">\(p\)</span> of <span
+class="math inline">\(f(x)=0\)</span> is a <em>zero of multiplicity</em>
+<span class="math inline">\(m\)</span> of <span
+class="math inline">\(f\)</span> if for <span class="math inline">\(x\ne
+p\)</span>, we can write <span class="math inline">\(f(x)=(x-p)^m
+q(x)\)</span>, where <span class="math inline">\(\lim_{x\rightarrow p}
+q(x)\ne 0\)</span>.</p>
+<h3 id="theorem-5">Theorem</h3>
+<p><span class="math inline">\(f\in C^1[a,b]\)</span> has a simple zero
+at <span class="math inline">\(p\)</span> in <span
+class="math inline">\((a,b)\)</span> if and only if <span
+class="math inline">\(f(p)=0\)</span>, but <span
+class="math inline">\(f&#39;(p)\ne 0\)</span>.</p>
+<h3 id="theorem-6">Theorem</h3>
+<p>The function <span class="math inline">\(f\in C^m[a,b]\)</span> has a
+zero of multiplicity <span class="math inline">\(m\)</span> at point
+<span class="math inline">\(p\)</span> in <span
+class="math inline">\((a,b)\)</span> if and only if <span
+class="math display">\[
+0=f(p)=f&#39;(p)=f&#39;&#39;(p)=\cdots = f^{(m-1)}(p),\text{ but }
+f^{(m)}(p)\ne 0.
+\]</span></p>
+</div>
+<div id="variants-for-multiple-roots" class="slide section level1">
+<h1>Variants for Multiple Roots</h1>
+<h3 id="newtons-method-for-multiple-roots">Newtonâ€™s Method for Multiple
+Roots</h3>
+<p>Define <span class="math inline">\(\mu(x) = f(x) /
+f&#39;(x)\)</span>. If <span class="math inline">\(p\)</span> is a zero
+of <span class="math inline">\(f\)</span> of multiplicity <span
+class="math inline">\(m\)</span> and <span
+class="math inline">\(f(x)=(x-p)^m q(x)\)</span>, then <span
+class="math display">\[
+\mu(x) = (x-p)\frac{q(x)}{mq(x) + (x-p)q&#39;(x)}
+\]</span> also has a zero at <span class="math inline">\(p\)</span>. But
+<span class="math inline">\(q(p)\ne 0\)</span>, so <span
+class="math display">\[
+\frac{q(p)}{mq(p)+(p-p)q&#39;(p)} = \frac{1}{m} \ne 0,
+\]</span> and <span class="math inline">\(p\)</span> is a simple zero of
+<span class="math inline">\(\mu\)</span>. Newtonâ€™s method can then be
+applied to <span class="math inline">\(\mu\)</span> to give <span
+class="math display">\[
+g(x) = x-\frac{f(x)f&#39;(x)}{[f&#39;(x)]^2-f(x)f&#39;&#39;(x)}
+\]</span></p>
+</div>
+<div id="aitkens-delta2-method" class="slide section level1">
+<h1>Aitkenâ€™s <span class="math inline">\(\Delta^2\)</span> Method</h1>
+<h3 id="accelerating-linearly-convergent-sequences">Accelerating
+linearly convergent sequences</h3>
+<ul>
+<li>Suppose <span class="math inline">\(\{p_n\}_{n=0}^\infty\)</span>
+linearly convergent with limit <span
+class="math inline">\(p\)</span></li>
+<li>Assume that <span class="math display">\[
+\frac{p_{n+1}-p}{p_n-p} \approx \frac{p_{n+2}-p}{p_{n+1}-p}
+\]</span></li>
+<li>Solving for <span class="math inline">\(p\)</span> gives <span
+class="math display">\[
+p \approx \frac{p_{n+2}p_n-p_{n+1}^2}{p_{n+2}-2p_{n+1}+p_n}
+= \cdots = p_n - \frac{(p_{n+1}-p_n)^2}{p_{n+2}-2p_{n+1}+p_n}
+\]</span></li>
+<li>Use this for new more rapidly converging sequence <span
+class="math inline">\(\{\hat{p}_n\}_{n=0}^\infty\)</span>: <span
+class="math display">\[
+\hat{p}_n = p_n - \frac{(p_{n+1}-p_n)^2}{p_{n+2}-2p_{n+1}+p_n}
+\]</span></li>
+</ul>
+</div>
+<div id="delta-notation" class="slide section level1">
+<h1>Delta Notation</h1>
+<h3 id="definition-2">Definition</h3>
+<p>For a given sequence <span
+class="math inline">\(\{p_n\}_{n=0}^\infty\)</span>, the <em>forward
+difference</em> <span class="math inline">\(\Delta p_n\)</span> is
+defined by <span class="math display">\[
+\Delta p_n = p_{n+1}-p_n,\qquad \text{for }n\ge 0
+\]</span> Higher powers of the operator <span
+class="math inline">\(\Delta\)</span> are defined recursively by <span
+class="math display">\[
+\Delta^k p_n = \Delta (\Delta^{k-1}p_n),\qquad \text{for }k\ge 2
+\]</span></p>
+<h3 id="aitkens-delta2-method-using-delta-notation">Aitkenâ€™s <span
+class="math inline">\(\Delta^2\)</span> method using delta notation</h3>
+<p>Since <span class="math inline">\(\Delta^2 p_n =
+p_{n+2}-2p_{n+1}+p_n\)</span>, we can write <span
+class="math display">\[
+\hat{p}_n = p_n - \frac{(\Delta p_n)^2}{\Delta^2 p_n},\qquad \text{for
+}n\ge 0
+\]</span></p>
+</div>
+<div id="convergence-of-aitkens-delta2-method"
+class="slide section level1">
+<h1>Convergence of Aitkenâ€™s <span
+class="math inline">\(\Delta^2\)</span> Method</h1>
+<h3 id="theorem-7">Theorem</h3>
+<p>Suppose that <span
+class="math inline">\(\{p_n\}_{n=0}^\infty\)</span> converges linearly
+to <span class="math inline">\(p\)</span> and that <span
+class="math display">\[
+\lim_{n\rightarrow\infty} \frac{p_{n+1}-p}{p_n-p}&lt;1
+\]</span> Then <span
+class="math inline">\(\{\hat{p}_n\}_{n=0}^\infty\)</span> converges to
+<span class="math inline">\(p\)</span> faster than <span
+class="math inline">\(\{p_n\}_{n=0}^\infty\)</span> in the sense that
+<span class="math display">\[
+\lim_{n\rightarrow\infty} \frac{\hat{p}_n-p}{p_n-p}=0
+\]</span></p>
+</div>
+<div id="steffensens-method" class="slide section level1">
+<h1>Steffensenâ€™s Method</h1>
+<h3 id="accelerating-fixed-point-iteration">Accelerating fixed-point
+iteration</h3>
+<p>Aitkenâ€™s <span class="math inline">\(\Delta^2\)</span> method for
+fixed-point iteration gives <span class="math display">\[
+\begin{aligned}
+&amp;p_0,\ p_1=g(p_0),\ p_2=g(p_1),\ \hat{p}_0=\{\Delta^2\}(p_0),\\
+&amp;p_3=g(p_2),\ \hat{p}_1 = \{\Delta^2\}(p_1),\ \ldots
+\end{aligned}
+\]</span> Steffensenâ€™s method assumes <span
+class="math inline">\(\hat{p}_0\)</span> is better than <span
+class="math inline">\(p_2\)</span>: <span class="math display">\[
+\begin{aligned}
+&amp;p_0^{(0)},\ p_1^{(0)}=g(p_0^{(0)}),\ p_2^{(0)}=g(p_1^{(0)}),\ %
+p_0^{(1)}=\{\Delta^2\}(p_0^{(0)}),\\
+&amp;p_1^{(1)}=g(p_0^{(1)}),\ \ldots
+\end{aligned}
+\]</span></p>
+<h3 id="theorem-8">Theorem</h3>
+<p>Suppose <span class="math inline">\(x=g(x)\)</span> has solution
+<span class="math inline">\(p\)</span> with <span
+class="math inline">\(g&#39;(p)\ne 1\)</span>. If exists <span
+class="math inline">\(\delta&gt;0\)</span> s.t. <span
+class="math inline">\(g\in C^3[p-\delta,p+\delta]\)</span>, then
+Steffensenâ€™s method gives quadratic convergence for <span
+class="math inline">\(p_0\in[p-\delta,p+\delta]\)</span>.</p>
+</div>
+<div id="steffensens-method-1" class="slide section level1">
+<h1>Steffensenâ€™s Method</h1>
+<h3 id="matlab-implementation-3">MATLAB Implementation</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="va">p</span> <span class="op">=</span> <span class="va">steffensen</span>(<span class="va">g</span><span class="op">,</span> <span class="va">p0</span><span class="op">,</span> <span class="va">tol</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">% Solve g(p) = p using Steffensen&#39;s method.</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">while</span> <span class="fl">1</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">p1</span> <span class="op">=</span> <span class="va">g</span>(<span class="va">p0</span>)<span class="op">;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="va">p2</span> <span class="op">=</span> <span class="va">g</span>(<span class="va">p1</span>)<span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="va">p</span> <span class="op">=</span> <span class="va">p0</span> <span class="op">-</span> (<span class="va">p1</span><span class="op">-</span><span class="va">p0</span>)<span class="op">^</span><span class="fl">2</span> <span class="op">/</span> (<span class="va">p2</span><span class="op">-</span><span class="fl">2</span><span class="op">*</span><span class="va">p1</span><span class="op">+</span><span class="va">p0</span>)<span class="op">;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="va">abs</span>(<span class="va">p</span><span class="op">-</span><span class="va">p0</span>) <span class="op">&lt;</span> <span class="va">tol</span><span class="op">,</span> <span class="kw">break</span><span class="op">;</span> <span class="kw">end</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="va">p0</span> <span class="op">=</span> <span class="va">p</span><span class="op">;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</div>
+<div id="zeros-of-polynomials" class="slide section level1">
+<h1>Zeros of Polynomials</h1>
+<h3 id="polynomial">Polynomial</h3>
+<p>A <em>polynomial of degree <span
+class="math inline">\(n\)</span></em> has the form <span
+class="math inline">\(P(x) = a_nx^n + a_{n-1}x^{n-1}+\)</span> <span
+class="math inline">\(\cdots+a_1x+a_0\)</span> with
+<em>coefficients</em> <span class="math inline">\(a_i\)</span> and <span
+class="math inline">\(a_n\ne 0\)</span>.</p>
+<h3 id="theorem-fundamental-theorem-of-algebra">Theorem (Fundamental
+Theorem of Algebra)</h3>
+<p>If <span class="math inline">\(P(x)\)</span> polynomial of degree
+<span class="math inline">\(n\ge 1\)</span>, with real or complex
+coefficients, <span class="math inline">\(P(x)=0\)</span> has at least
+one root.</p>
+<h3 id="corollary-1">Corollary</h3>
+<p>Exists unique <span class="math inline">\(x_1,\ldots,x_k\)</span> and
+<span class="math inline">\(m_1,\ldots,m_k\)</span>, with <span
+class="math inline">\(\sum_{i=1}^k m_i=n\)</span> and <span
+class="math display">\[
+P(x)=a_n(x-x_1)^{m_1}(x-x_2)^{m_2}\cdots(x-x_k)^{m_k}.
+\]</span></p>
+<h3 id="corollary-2">Corollary</h3>
+<p><span class="math inline">\(P(x),Q(x)\)</span> polynomials of degree
+at most <span class="math inline">\(n\)</span>. If <span
+class="math inline">\(P(x_i)=Q(x_i)\)</span> for <span
+class="math inline">\(i=1,2,\ldots,k\)</span>, with <span
+class="math inline">\(k&gt;n\)</span>, then <span
+class="math inline">\(P(x)=Q(x)\)</span>.</p>
+</div>
+<div id="horners-method" class="slide section level1">
+<h1>Hornerâ€™s Method</h1>
+<h3 id="theorem-horners-method">Theorem (Hornerâ€™s Method)</h3>
+<p>Let <span
+class="math inline">\(P(x)=a_nx^n+a_{n-1}x^{n-1}+\cdots+a_1x+a_0\)</span>.
+If <span class="math inline">\(b_n=a_n\)</span> and <span
+class="math display">\[
+b_k=a_k+b_{k+1}x_0, \qquad \text{for }k=n-1,n-2,\ldots,1,0,
+\]</span> then <span class="math inline">\(b_0=P(x_0)\)</span>.
+Moreover, if <span class="math display">\[
+Q(x)=b_nx^{n-1}+b_{n-1}x^{n-2}+\cdots+b_2x+b_1,
+\]</span> then <span
+class="math inline">\(P(x)=(x-x_0)Q(x)+b_0\)</span>.</p>
+<h3 id="computing-derivatives">Computing Derivatives</h3>
+<p>Differentiation gives <span class="math display">\[
+P&#39;(x)=Q(x)+(x-x_0)Q&#39;(x)\qquad\text{and}\qquad
+P&#39;(x_0)=Q(x_0).
+\]</span></p>
+</div>
+<div id="horners-method-1" class="slide section level1">
+<h1>Hornerâ€™s Method</h1>
+<h3 id="matlab-implementation-4">MATLAB Implementation</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> [<span class="va">y</span><span class="op">,</span> <span class="va">z</span>] <span class="op">=</span> <span class="va">horner</span>(<span class="va">a</span><span class="op">,</span> <span class="va">x0</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">% Evaluate polynomial:</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">%    P(x) = a(1)x^n + a(2)x^(n-1) + ... + a(n)x + a(n+1)</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">% and its derivative at x0 using Horner&#39;s method.</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">% Outputs: y = P(x0), z = P&#39;(x0).</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="va">n</span> <span class="op">=</span> <span class="va">length</span>(<span class="va">a</span>)<span class="op">-</span><span class="fl">1</span><span class="op">;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="va">y</span> <span class="op">=</span> <span class="va">a</span>(<span class="fl">1</span>)<span class="op">;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="va">z</span> <span class="op">=</span> <span class="va">a</span>(<span class="fl">1</span>)<span class="op">;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">j</span> <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="va">n</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="va">y</span> <span class="op">=</span> <span class="va">x0</span><span class="op">*</span><span class="va">y</span> <span class="op">+</span> <span class="va">a</span>(<span class="va">j</span>)<span class="op">;</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="va">z</span> <span class="op">=</span> <span class="va">x0</span><span class="op">*</span><span class="va">z</span> <span class="op">+</span> <span class="va">y</span><span class="op">;</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="va">y</span> <span class="op">=</span> <span class="va">x0</span><span class="op">*</span><span class="va">y</span> <span class="op">+</span> <span class="va">a</span>(<span class="va">n</span><span class="op">+</span><span class="fl">1</span>)<span class="op">;</span></span></code></pre></div>
+</div>
+<div id="deflation" class="slide section level1">
+<h1>Deflation</h1>
+<h3 id="deflation-1">Deflation</h3>
+<ul>
+<li>Compute approximate root <span
+class="math inline">\(\hat{x}_1\)</span> using Newton. Then <span
+class="math display">\[
+P(x)\approx (x-\hat{x}_1)Q_1(x).
+\]</span></li>
+<li>Apply recursively on <span class="math inline">\(Q_1(x)\)</span>
+until the quadratic factor <span
+class="math inline">\(Q_{n-2}(x)\)</span> can be solved directly.</li>
+<li>Improve accuracy with Newtonâ€™s method on original <span
+class="math inline">\(P(x)\)</span>.</li>
+</ul>
+</div>
+<div id="mÃ¼llers-method" class="slide section level1">
+<h1>MÃ¼llerâ€™s Method</h1>
+<h3 id="mÃ¼llers-method-1">MÃ¼llerâ€™s Method</h3>
+<ul>
+<li>Similar to the Secant method, but parabola instead of line</li>
+<li>Fit quadratic polynomial <span
+class="math inline">\(P(x)=a(x-p_2)^2+b(x-p_2)+c\)</span> that passes
+through <span class="math inline">\((p_0,f(p_0))\)</span>,<span
+class="math inline">\((p_1,f(p_1))\)</span>,<span
+class="math inline">\((p_2,f(p_2))\)</span>.</li>
+<li>Solve <span class="math inline">\(P(x)=0\)</span> for <span
+class="math inline">\(p_3\)</span>, choose root closest to <span
+class="math inline">\(p_2\)</span>: <span class="math display">\[
+p_3=p_2-\frac{2c}{b+\mathrm{sgn}(b)\sqrt{b^2-4ac}}.
+\]</span></li>
+<li>Repeat until convergence</li>
+<li>Relatively insensitive to initial <span
+class="math inline">\(p_0,p_1,p_2\)</span>, but e.g. <span
+class="math inline">\(f(p_i)=f(p_{i+1})=f(p_{i+2})\ne 0\)</span> gives
+problems</li>
+</ul>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,426 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Chapter 1 Mathematical Preliminaries and Error Analysis</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .skip-main {
+        position: absolute;
+        top: -1000px;
+        left: -1000px;
+        height: 1px;
+        width: 1px;
+        text-align: left;
+        overflow: hidden;
+    }
+    .skip-main:focus, .skip-main:active {
+        top: 0;
+        left: 0;
+        height: auto;
+        width: auto;
+        padding: 10px;
+        background: #fff;
+        z-index: 1000;
+        border: 2px solid #000;
+    }
+    /* Contrast fixes for code highlighting and body text */
+    body { color: #000 !important; }
+    pre.numberSource code > span > a:first-child::before { color: #767676 !important; }
+    pre.numberSource { border-left: 1px solid #767676 !important; }
+    code span.co { color: #006600 !important; }
+    code span.ot { color: #bc3f00 !important; }
+    code span.pp { color: #bc3f00 !important; }
+    code span.er { color: #d00000 !important; font-weight: bold; }
+    code span.al { color: #d00000 !important; }
+  </style>
+  <link rel="stylesheet" type="text/css" media="screen, projection, print"
+    href="slidy.css" />
+  <script
+  src="mathjax.js"
+  type="text/javascript"></script>
+  <script src="slidy.js"
+    charset="utf-8" type="text/javascript"></script>
+</head>
+<body>
+<a class="skip-main" href="#slidy-slides">Skip to main content</a>
+<div class="slide titlepage">
+  <h1 class="title"><p>Chapter 1<br />
+Mathematical Preliminaries and Error Analysis</p></h1>
+  <p class="author">
+<p>Per-Olof Persson<br />
+persson@berkeley.edu</p>
+  </p>
+  <p class="institute">
+<p>Department of Mathematics<br />
+University of California, Berkeley</p>
+  </p>
+  <p class="date">Math 128A Numerical Analysis</p>
+</div>
+<div id="limits-and-continuity" class="slide section level1">
+<h1>Limits and Continuity</h1>
+<h3 id="definition">Definition</h3>
+<p>A function <span class="math inline">\(f\)</span> defined on a set
+<span class="math inline">\(X\)</span> of real numbers has the
+<em>limit</em> <span class="math inline">\(L\)</span> at <span
+class="math inline">\(x_0\)</span>, written <span
+class="math inline">\(\lim_{x\rightarrow x_0} f(x) = L\)</span>, if,
+given any real number <span
+class="math inline">\(\varepsilon&gt;0\)</span>, there exists a real
+number <span class="math inline">\(\delta&gt;0\)</span> such that <span
+class="math display">\[
+|f(x)-L|&lt;\varepsilon,\quad\text{ whenever }\quad
+x\in X\text{  and  } 0&lt;|x-x_0|&lt;\delta.
+\]</span></p>
+<h3 id="definition-1">Definition</h3>
+<p>Let <span class="math inline">\(f\)</span> be a function defined on a
+set <span class="math inline">\(X\)</span> of real numbers and <span
+class="math inline">\(x_0\in X\)</span>. Then <span
+class="math inline">\(f\)</span> is <em>continuous</em> at <span
+class="math inline">\(x_0\)</span> if <span class="math display">\[
+\lim_{x\rightarrow x_0} f(x) = f(x_0).
+\]</span> The function <span class="math inline">\(f\)</span> is
+continuous on the set <span class="math inline">\(X\)</span> if it is
+continuous at each number in <span class="math inline">\(X\)</span>.</p>
+</div>
+<div id="limits-of-sequences" class="slide section level1">
+<h1>Limits of Sequences</h1>
+<h3 id="definition-2">Definition</h3>
+<p>Let <span class="math inline">\(\{x_n\}_{n=1}^\infty\)</span> be an
+infinite sequence of real of complex numbers. The sequence <span
+class="math inline">\(\{x_n\}_{n=1}^\infty\)</span> has the
+<em>limit</em> <span class="math inline">\(x\)</span> if, for any <span
+class="math inline">\(\varepsilon&gt;0\)</span>, there exists a positive
+integer <span class="math inline">\(N(\varepsilon)\)</span> such that
+<span class="math inline">\(|x_n-x|&lt;\varepsilon\)</span>, whenever
+<span class="math inline">\(n&gt;N(\varepsilon)\)</span>. The notation
+<span class="math display">\[
+\lim_{n\rightarrow\infty} x_n = x,\text{ or } x_n\rightarrow x\text{ as
+}
+n\rightarrow\infty,
+\]</span> means that the sequence <span
+class="math inline">\(\{x_n\}_{n=1}^\infty\)</span> converges to <span
+class="math inline">\(x\)</span>.</p>
+<h3 id="theorem">Theorem</h3>
+<p>If <span class="math inline">\(f\)</span> is a function defined on a
+set <span class="math inline">\(X\)</span> of real numbers and <span
+class="math inline">\(x_0\in X\)</span>, then the following statements
+are equivalent:</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\(f\)</span> is continuous at <span
+class="math inline">\(x_0\)</span>;</p></li>
+<li><p>If the sequence <span
+class="math inline">\(\{x_n\}_{n=1}^\infty\)</span> in <span
+class="math inline">\(X\)</span> converges to <span
+class="math inline">\(x_0\)</span>, then <span
+class="math inline">\(\lim_{n\rightarrow\infty} f(x_n) =
+f(x_0)\)</span>.</p></li>
+</ol>
+</div>
+<div id="derivatives" class="slide section level1">
+<h1>Derivatives</h1>
+<h3 id="definition-3">Definition</h3>
+<p>Let <span class="math inline">\(f\)</span> be a function defined in
+an open interval containing <span class="math inline">\(x_0\)</span>.
+The function <span class="math inline">\(f\)</span> is
+<em>differentiable</em> at <span class="math inline">\(x_0\)</span> if
+<span class="math display">\[
+f&#39;(x_0) = \lim_{x\rightarrow x_0} \frac{f(x)-f(x_0)}{x-x_0}
+\]</span> exists. The number <span
+class="math inline">\(f&#39;(x_0)\)</span> is called the
+<em>derivative</em> of <span class="math inline">\(f\)</span> at <span
+class="math inline">\(x_0\)</span>. A function that has a derivative at
+each number in a set <span class="math inline">\(X\)</span> is
+<em>differentiable</em> on <span class="math inline">\(X\)</span>.</p>
+<h3 id="theorem-1">Theorem</h3>
+<p>If the function <span class="math inline">\(f\)</span> is
+differentiable at <span class="math inline">\(x_0\)</span>, then <span
+class="math inline">\(f\)</span> is continuous at <span
+class="math inline">\(x_0\)</span>.</p>
+</div>
+<div id="derivative-theorems" class="slide section level1">
+<h1>Derivative Theorems</h1>
+<h3 id="theorem-rolles-theorem">Theorem (Rolleâ€™s Theorem)</h3>
+<p>Suppose <span class="math inline">\(f\in C[a,b]\)</span> and <span
+class="math inline">\(f\)</span> is differentiable on <span
+class="math inline">\((a,b)\)</span>. If <span
+class="math inline">\(f(a)=f(b)\)</span>, then a number <span
+class="math inline">\(c\)</span> in <span
+class="math inline">\((a,b)\)</span> exists with <span
+class="math inline">\(f&#39;(c) = 0\)</span>.</p>
+<h3 id="theorem-mean-value-theorem">Theorem (Mean Value Theorem)</h3>
+<p>If <span class="math inline">\(f\in C[a,b]\)</span> and <span
+class="math inline">\(f\)</span> is differentiable on <span
+class="math inline">\((a,b)\)</span>, then a number <span
+class="math inline">\(c\)</span> in <span
+class="math inline">\((a,b)\)</span> exists with <span
+class="math display">\[
+f&#39;(c) = \frac{f(b)-f(a)}{b-a}.
+\]</span></p>
+<h3 id="theorem-extreme-value-theorem">Theorem (Extreme Value
+Theorem)</h3>
+<p>If <span class="math inline">\(f\in C[a,b]\)</span>, then <span
+class="math inline">\(c_1,c_2\in [a,b]\)</span> exist with <span
+class="math inline">\(f(c_1)\le f(x) \le f(c_2)\)</span>, for all <span
+class="math inline">\(x\in [a,b]\)</span>. In addition, if <span
+class="math inline">\(f\)</span> is differentiable on <span
+class="math inline">\((a,b)\)</span>, then the numbers <span
+class="math inline">\(c_1\)</span> and <span
+class="math inline">\(c_2\)</span> occur either at the endpoints of
+<span class="math inline">\([a,b]\)</span> or where <span
+class="math inline">\(f&#39;\)</span> is zero.</p>
+</div>
+<div id="integrals" class="slide section level1">
+<h1>Integrals</h1>
+<h3 id="definition-4">Definition</h3>
+<p>The <em>Riemann integral</em> of the function <span
+class="math inline">\(f\)</span> on the interval <span
+class="math inline">\([a,b]\)</span> is the following limit, provided it
+exists: <span class="math display">\[
+\int_a^b f(x)\, dx = \lim_{\max \Delta x_i\rightarrow 0}
+\sum_{i=1}^n f(z_i) \Delta x_i,
+\]</span> where the numbers <span
+class="math inline">\(x_0,x_1,\ldots,x_n\)</span> satisfy <span
+class="math inline">\(a=x_0\le x_1 \le\cdots \le x_n = b\)</span>, and
+where <span class="math inline">\(\Delta x_i = x_i-x_{i-1}\)</span>, for
+each <span class="math inline">\(i=1,2,\ldots,n\)</span>, and <span
+class="math inline">\(z_i\)</span> is arbitrarily chosen in the interval
+<span class="math inline">\([x_{i-1},x_i]\)</span>.</p>
+</div>
+<div id="integrals-1" class="slide section level1">
+<h1>Integrals</h1>
+<h3 id="theorem-weighted-mean-value-theorem-for-integrals">Theorem
+(Weighted Mean Value Theorem for Integrals)</h3>
+<p>Suppose <span class="math inline">\(f\in C[a,b]\)</span>, the Riemann
+integral of <span class="math inline">\(g\)</span> exists on <span
+class="math inline">\([a,b]\)</span>, and <span
+class="math inline">\(g(x)\)</span> does not change sign on <span
+class="math inline">\([a,b]\)</span>. Then there exists a number <span
+class="math inline">\(c\)</span> in <span
+class="math inline">\((a,b)\)</span> with <span class="math display">\[
+\int_a^b f(x)g(x)\, dx = f(c)\int_a^b g(x)\,dx.
+\]</span></p>
+</div>
+<div id="generalizations" class="slide section level1">
+<h1>Generalizations</h1>
+<h3 id="theorem-generalized-rolles-theorem">Theorem (Generalized Rolleâ€™s
+Theorem)</h3>
+<p>Suppose <span class="math inline">\(f\in C[a,b]\)</span> is <span
+class="math inline">\(n\)</span> times differentiable on <span
+class="math inline">\((a,b)\)</span>. If <span
+class="math inline">\(f(x)\)</span> is zero at the <span
+class="math inline">\(n+1\)</span> distinct numbers <span
+class="math inline">\(x_0,\ldots,x_n\)</span> in <span
+class="math inline">\([a,b]\)</span>, then a number <span
+class="math inline">\(c\)</span> in <span
+class="math inline">\((a,b)\)</span> exists with <span
+class="math inline">\(f^{(n)}(c) = 0\)</span>.</p>
+<h3 id="theorem-intermediate-value-theorem">Theorem (Intermediate Value
+Theorem)</h3>
+<p>If <span class="math inline">\(f\in C[a,b]\)</span> and <span
+class="math inline">\(K\)</span> is any number between <span
+class="math inline">\(f(a)\)</span> and <span
+class="math inline">\(f(b)\)</span>, then there exists a number <span
+class="math inline">\(c\)</span> in <span
+class="math inline">\((a,b)\)</span> for which <span
+class="math inline">\(f(c) = K\)</span>.</p>
+</div>
+<div id="taylor-polynomials" class="slide section level1">
+<h1>Taylor Polynomials</h1>
+<h3 id="theorem-taylors-theorem">Theorem (Taylorâ€™s Theorem)</h3>
+<p>Suppose <span class="math inline">\(f\in C^n[a,b]\)</span>, that
+<span class="math inline">\(f^{(n+1)}\)</span> exists on <span
+class="math inline">\([a,b]\)</span>, and <span
+class="math inline">\(x_0\in [a,b]\)</span>. For every <span
+class="math inline">\(x\in [a,b]\)</span>, there exists a number <span
+class="math inline">\(\xi(x)\)</span> between <span
+class="math inline">\(x_0\)</span> and <span
+class="math inline">\(x\)</span> with <span
+class="math inline">\(f(x)=P_n(x)+R_n(x)\)</span>, where <span
+class="math display">\[
+\begin{aligned}
+P_n(x) &amp;= f(x_0) + f&#39;(x_0)(x-x_0) +
+\frac{f&#39;&#39;(x_0)}{2!}(x-x_0)^2 + \\
+       &amp;+ \cdots + \frac{f^{(n)}(x_0)}{n!}(x-x_0)^n =
+       \sum_{k=0}^n \frac{f^{(k)}(x_0)}{k!}(x-x_0)^k
+\end{aligned}
+\]</span> and <span class="math display">\[
+R_n(x) = \frac{f^{(n+1)}(\xi(x))}{(n+1)!}(x-x_0)^{n+1}.
+\]</span></p>
+</div>
+<div id="ieee-floating-point-numbers" class="slide section level1">
+<h1>IEEE Floating Point Numbers</h1>
+<h3 id="long-real-double-precision-format">Long real (double precision)
+format</h3>
+<ul>
+<li>Widely adopted standard</li>
+<li>Default data type in MATLAB, â€œ<code>double</code>â€ in C</li>
+<li>Base 2, 1 sign bit, 11 exponent bits, 52 significand bits: <span
+class="math display">\[
+\begin{array}{c|c|c}
+\text{x} &amp; \text{xxxxxxxxxxx} &amp; \text{xxx}\cdots\text{ (52 total
+bits) }\cdots\text{xxx} \\ \hline
+s &amp;      c      &amp;                      f                      
+\end{array}
+\]</span></li>
+<li>Represented number: <span class="math display">\[
+(-1)^s 2^{c-1023}(1+f)
+\]</span></li>
+</ul>
+</div>
+<div id="decimal-floating-point-numbers" class="slide section level1">
+<h1>Decimal Floating-Point Numbers</h1>
+<h3 id="base-10-floating-point">Base-10 Floating-Point</h3>
+<ul>
+<li>For simplicity we study <span class="math inline">\(k\)</span>-digit
+<em>decimal machine numbers</em>: <span class="math display">\[
+\pm0.d_1d_2\ldots d_k \times 10^n, \quad 1\le d_1\le 9, \quad 0\le
+d_i\le 9
+\]</span></li>
+<li>Any positive number within the range can be written: <span
+class="math display">\[
+y = 0.d_1d_2\cdots d_kd_{k+1}d_{k+2}\ldots \times 10^n
+\]</span></li>
+<li>Two ways to represent <span class="math inline">\(y\)</span> with
+<span class="math inline">\(k\)</span> digits:
+<ul>
+<li><em>Chopping</em>: Chop off after <span
+class="math inline">\(k\)</span> digits: <span class="math display">\[
+fl(y) = 0.d_1d_2\ldots d_k \times 10^n
+\]</span></li>
+<li><em>Rounding</em>: Add <span class="math inline">\(5 \times
+10^{n-(k+1)}\)</span> and chop: <span class="math display">\[
+fl(y) = 0.\delta_1\delta_2\ldots\delta_k \times 10^n
+\]</span></li>
+</ul></li>
+</ul>
+</div>
+<div id="errors-and-significant-digits" class="slide section level1">
+<h1>Errors and Significant Digits</h1>
+<h3 id="definition-5">Definition</h3>
+<p>If <span class="math inline">\(p^*\)</span> is an approximation to
+<span class="math inline">\(p\)</span>, the <em>absolute error</em> is
+<span class="math inline">\(|p-p^*|\)</span>, and the <em>relative
+error</em> is <span class="math inline">\(|p-p^*|/|p|\)</span>, provided
+that <span class="math inline">\(p\ne 0\)</span>.</p>
+<h3 id="definition-6">Definition</h3>
+<p>The number <span class="math inline">\(p^*\)</span> is said to
+approximate <span class="math inline">\(p\)</span> to <span
+class="math inline">\(t\)</span> <em>significant digits</em> (or
+figures) if <span class="math inline">\(t\)</span> is the largest
+nonnegative integer for which <span class="math display">\[
+\frac{|p-p^*|}{|p|} \le 5\times 10^{-t}.
+\]</span></p>
+</div>
+<div id="floating-point-operations" class="slide section level1">
+<h1>Floating Point Operations</h1>
+<h3 id="finite-digit-arithmetic">Finite-Digit Arithmetic</h3>
+<ul>
+<li>Machine addition, subtraction, multiplication, and division: <span
+class="math display">\[
+\begin{aligned}
+x \oplus y = fl(fl(x)+fl(y)), \quad &amp; x \otimes y = fl(fl(x)\times
+fl(y)) \\
+x \ominus y = fl(fl(x)-fl(y)), \quad &amp; x \oslash y = fl(fl(x) /
+fl(y))
+\end{aligned}
+\]</span></li>
+<li>â€œRound input, perform exact arithmetic, round the resultâ€</li>
+</ul>
+<h3 id="cancellation">Cancellation</h3>
+<ul>
+<li>Common problem: Subtraction of nearly equal numbers: <span
+class="math display">\[
+\begin{aligned}
+fl(x) &amp;= 0.d_1d_2\ldots d_p\alpha_{p+1}\alpha_{p+2}\ldots\alpha_k
+\times 10^n \\
+fl(y) &amp;= 0.d_1d_2\ldots d_p\beta_{p+1}\beta_{p+2}\ldots\beta_k
+\times 10^n
+\end{aligned}
+\]</span> gives fewer digits of significance: <span
+class="math display">\[
+fl(fl(x)-fl(y)) =  0.\sigma_{p+1}\sigma_{p+2}\ldots\sigma_k \times
+10^{n-p}
+\]</span></li>
+</ul>
+</div>
+<div id="error-growth-and-stability" class="slide section level1">
+<h1>Error Growth and Stability</h1>
+<h3 id="definition-7">Definition</h3>
+<p>Suppose <span class="math inline">\(E_0&gt;0\)</span> is an initial
+error, and <span class="math inline">\(E_n\)</span> is the error after
+<span class="math inline">\(n\)</span> operations.</p>
+<ul>
+<li><span class="math inline">\(E_n\approx CnE_0\)</span>:
+<em>linear</em> growth of error</li>
+<li><span class="math inline">\(E_n\approx C^nE_0\)</span>:
+<em>exponential</em> growth of error</li>
+</ul>
+<h3 id="stability">Stability</h3>
+<ul>
+<li><em>Stable</em> algorithm: Small changes in the initial data produce
+small changes in the final result</li>
+<li><em>Unstable</em> or <em>conditionally stable</em> algorithm: Large
+errors in final result for all or some initial data with small
+errors</li>
+</ul>
+</div>
+<div id="rate-of-convergence-sequences" class="slide section level1">
+<h1>Rate of Convergence (Sequences)</h1>
+<h3 id="definition-8">Definition</h3>
+<p>Suppose <span class="math inline">\(\{\beta_n\}_{n=1}^\infty\)</span>
+is a sequence converging to zero, and <span
+class="math inline">\(\{\alpha_n\}_{n=1}^\infty\)</span> converges to a
+number <span class="math inline">\(\alpha\)</span>. If a positive
+constant <span class="math inline">\(K\)</span> exists with <span
+class="math display">\[
+|\alpha_n-\alpha|\le K|\beta_n|,\quad\text{for large }n,
+\]</span> then we say that <span
+class="math inline">\(\{\alpha_n\}_{n=1}^\infty\)</span> converges to
+<span class="math inline">\(\alpha\)</span> with <em>rate of
+convergence</em> <span class="math inline">\(O(\beta_n)\)</span>,
+indicated by <span class="math inline">\(\alpha_n = \alpha +
+O(\beta_n)\)</span>.</p>
+<h3 id="polynomial-rate-of-convergence">Polynomial rate of
+convergence</h3>
+<ul>
+<li>Normally we will use <span class="math display">\[
+\beta_n = \frac{1}{n^p},
+\]</span> and look for the largest value <span
+class="math inline">\(p&gt;0\)</span> such that <span
+class="math inline">\(\alpha_n = \alpha + O(1/n^p)\)</span>.</li>
+</ul>
+</div>
+<div id="rate-of-convergence-functions" class="slide section level1">
+<h1>Rate of Convergence (Functions)</h1>
+<h3 id="definition-9">Definition</h3>
+<p>Suppose that <span class="math inline">\(\lim_{h\rightarrow 0} G(h) =
+0\)</span> and <span class="math inline">\(\lim_{h\rightarrow 0} F(h) =
+L\)</span>. If a positive constant <span
+class="math inline">\(K\)</span> exists with <span
+class="math display">\[
+|F(h)-L| \le K | G(h) |,\quad\text{for sufficiently small }h,
+\]</span> then we write <span class="math inline">\(F(h) =
+L+O(G(h))\)</span>.</p>
+<h3 id="polynomial-rate-of-convergence-1">Polynomial rate of
+convergence</h3>
+<ul>
+<li>Normally we will use <span class="math display">\[
+G(h) = h^p,
+\]</span> and look for the largest value <span
+class="math inline">\(p&gt;0\)</span> such that <span
+class="math inline">\(F(h) = L+O(h^p)\)</span>.</li>
+</ul>
+</div>
+</body>
+</html>
+

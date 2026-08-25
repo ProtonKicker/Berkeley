@@ -1,0 +1,714 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Chapter 6 Direct Methods for Solving Linear Systems</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .skip-main {
+        position: absolute;
+        top: -1000px;
+        left: -1000px;
+        height: 1px;
+        width: 1px;
+        text-align: left;
+        overflow: hidden;
+    }
+    .skip-main:focus, .skip-main:active {
+        top: 0;
+        left: 0;
+        height: auto;
+        width: auto;
+        padding: 10px;
+        background: #fff;
+        z-index: 1000;
+        border: 2px solid #000;
+    }
+    /* Contrast fixes for code highlighting and body text */
+    body { color: #000 !important; }
+    pre.numberSource code > span > a:first-child::before { color: #767676 !important; }
+    pre.numberSource { border-left: 1px solid #767676 !important; }
+    code span.co { color: #006600 !important; }
+    code span.ot { color: #bc3f00 !important; }
+    code span.pp { color: #bc3f00 !important; }
+    code span.er { color: #d00000 !important; font-weight: bold; }
+    code span.al { color: #d00000 !important; }
+  </style>
+  <link rel="stylesheet" type="text/css" media="screen, projection, print"
+    href="slidy.css" />
+  <script
+  src="mathjax.js"
+  type="text/javascript"></script>
+  <script src="slidy.js"
+    charset="utf-8" type="text/javascript"></script>
+</head>
+<body>
+<a class="skip-main" href="#slidy-slides">Skip to main content</a>
+<div class="slide titlepage">
+  <h1 class="title"><p>Chapter 6<br />
+Direct Methods for Solving Linear Systems</p></h1>
+  <p class="author">
+<p>Per-Olof Persson<br />
+persson@berkeley.edu</p>
+  </p>
+  <p class="institute">
+<p>Department of Mathematics<br />
+University of California, Berkeley</p>
+  </p>
+  <p class="date">Math 128A Numerical Analysis</p>
+</div>
+<div id="direct-methods-for-linear-systems"
+class="slide section level1">
+<h1>Direct Methods for Linear Systems</h1>
+<h3 id="section"></h3>
+<p>Consider solving a linear system of the form: <span
+class="math display">\[
+\begin{aligned}
+E_1: a_{11}x_1 + a_{12}x_2+\cdots+a_{1n}x_n &amp;= b_1, \\
+E_2: a_{21}x_1 + a_{22}x_2+\cdots+a_{2n}x_n &amp;= b_2, \\
+    &amp; \ \,\vdots \\
+E_n: a_{n1}x_1 + a_{n2}x_2+\cdots+a_{nn}x_n &amp;= b_n,
+\end{aligned}
+\]</span> for <span class="math inline">\(x_1,\ldots,x_n\)</span>.
+<em>Direct methods</em> give an answer in a fixed number of steps,
+subject only to round-off errors.</p>
+<h3 id="section-1"></h3>
+<p>We use three row operations to simplify the linear system:</p>
+<ol style="list-style-type: decimal">
+<li>Multiply Eq. <span class="math inline">\(E_i\)</span> by <span
+class="math inline">\(\lambda\ne 0\)</span>: <span
+class="math inline">\((\lambda E_i)\rightarrow (E_i)\)</span></li>
+<li>Multiply Eq. <span class="math inline">\(E_j\)</span> by <span
+class="math inline">\(\lambda\)</span> and add to Eq. <span
+class="math inline">\(E_i\)</span>: <span class="math inline">\((E_i +
+\lambda E_j) \rightarrow (E_i)\)</span></li>
+<li>Exchange Eq. <span class="math inline">\(E_i\)</span> and Eq. <span
+class="math inline">\(E_j\)</span>: <span class="math inline">\((E_i)
+\leftrightarrow (E_j)\)</span></li>
+</ol>
+</div>
+<div id="gaussian-elimination" class="slide section level1">
+<h1>Gaussian Elimination</h1>
+<h3 id="gaussian-elimination-with-backward-substitution">Gaussian
+Elimination with Backward Substitution</h3>
+<ul>
+<li>Reduce a linear system to <em>triangular form</em> by introducing
+zeros using the row operations <span class="math inline">\((E_i +
+\lambda E_j) \rightarrow (E_i)\)</span></li>
+<li>Solve the triangular form using <em>backward-substitution</em></li>
+</ul>
+<h3 id="row-exchanges">Row Exchanges</h3>
+<ul>
+<li>If a <em>pivot element</em> on the diagonal is zero, the reduction
+to triangular form fails</li>
+<li>Find a nonzero element below the diagonal and exchange the two
+rows</li>
+</ul>
+<h3 id="definition">Definition</h3>
+<p>An <em><span class="math inline">\(n\times m\)</span> matrix</em> is
+a rectangular array of elements with <span
+class="math inline">\(n\)</span> rows and <span
+class="math inline">\(m\)</span> columns in which both value and
+position of an element is important</p>
+</div>
+<div id="operation-counts" class="slide section level1">
+<h1>Operation Counts</h1>
+<h3 id="section-2"></h3>
+<ul>
+<li>Count the number of arithmetic operations performed</li>
+<li>Use the formulas <span class="math display">\[
+\begin{aligned}
+\sum_{j=1}^m j = \frac{m(m+1)}{2},\quad
+\sum_{j=1}^m j^2 = \frac{m(m+1)(2m+1)}{6}
+\end{aligned}
+\]</span></li>
+</ul>
+<h3 id="reduction-to-triangular-form">Reduction to Triangular Form</h3>
+<p>Multiplications/divisions: <span class="math display">\[
+\begin{aligned}
+\sum_{i=1}^{n-1} (n-i)(n-i+2) = \cdots =
+\frac{2n^3 + 3n^2 -5n}{6}
+\end{aligned}
+\]</span> Additions/subtractions: <span class="math display">\[
+\begin{aligned}
+\sum_{i=1}^{n-1} (n-i)(n-i+1) = \cdots =
+\frac{n^3 - n}{3}
+\end{aligned}
+\]</span></p>
+</div>
+<div id="operation-counts-1" class="slide section level1">
+<h1>Operation Counts</h1>
+<h3 id="backward-substitution">Backward Substitution</h3>
+<p>Multiplications/divisions: <span class="math display">\[
+\begin{aligned}
+1+\sum_{i=1}^{n-1} ((n-i)+1) = \frac{n^2+n}{2}
+\end{aligned}
+\]</span> Additions/subtractions: <span class="math display">\[
+\begin{aligned}
+\sum_{i=1}^{n-1} ((n-i-1)+1) = \frac{n^2-n}{2}
+\end{aligned}
+\]</span></p>
+</div>
+<div id="operation-counts-2" class="slide section level1">
+<h1>Operation Counts</h1>
+<h3 id="gaussian-elimination-total-operation-count">Gaussian Elimination
+Total Operation Count</h3>
+<p>Multiplications/divisions: <span class="math display">\[
+\begin{aligned}
+\frac{n^3}{3}+n^2-\frac{n}{3}
+\end{aligned}
+\]</span> Additions/subtractions: <span class="math display">\[
+\begin{aligned}
+\frac{n^3}{3}+\frac{n^2}{2}-\frac{5n}{6}
+\end{aligned}
+\]</span></p>
+</div>
+<div id="partial-pivoting" class="slide section level1">
+<h1>Partial Pivoting</h1>
+<h3 id="section-3"></h3>
+<ul>
+<li>In Gaussian elimination, if a pivot element <span
+class="math inline">\(a_{kk}^{(k)}\)</span> is small compared to an
+element <span class="math inline">\(a_{jk}^{(k)}\)</span> below, the
+multiplier <span class="math display">\[
+\begin{aligned}
+m_{jk} = \frac{a_{jk}^{(k)}}{a_{kk}^{(k)}}
+\end{aligned}
+\]</span> will be large, resulting in round-off errors</li>
+<li><em>Partial pivoting</em> finds the smallest <span
+class="math inline">\(p\ge k\)</span> such that <span
+class="math display">\[
+\begin{aligned}
+|a_{pk}^{(k)}| = \max_{k\le i \le n} | a_{ik}^{(k)} |
+\end{aligned}
+\]</span> and interchanges the rows <span
+class="math inline">\((E_k)\leftrightarrow (E_p)\)</span></li>
+</ul>
+</div>
+<div id="scaled-partial-pivoting" class="slide section level1">
+<h1>Scaled Partial Pivoting</h1>
+<h3 id="section-4"></h3>
+<ul>
+<li>If there are large variations in magnitude of the elements within a
+row, <em>scaled partial pivoting</em> can be used</li>
+<li>Define a scale factor <span class="math inline">\(s_i\)</span> for
+each row <span class="math display">\[
+\begin{aligned}
+s_i = \max_{1\le j \le n} |a_{ij}|
+\end{aligned}
+\]</span></li>
+<li>At step <span class="math inline">\(i\)</span>, find <span
+class="math inline">\(p\)</span> such that <span class="math display">\[
+\begin{aligned}
+\frac{|a_{pi}|}{s_p} = \max_{i\le k \le n} \frac{|a_{ki}|}{s_k}
+\end{aligned}
+\]</span> and interchange the rows <span
+class="math inline">\((E_i)\leftrightarrow (E_p)\)</span></li>
+</ul>
+</div>
+<div id="linear-algebra" class="slide section level1">
+<h1>Linear Algebra</h1>
+<h3 id="definition-1">Definition</h3>
+<p>Two matrices <span class="math inline">\(A\)</span> and <span
+class="math inline">\(B\)</span> are <em>equal</em> if they have the
+same number of rows and columns <span class="math inline">\(n\times
+m\)</span> and if <span
+class="math inline">\(a_{ij}=b_{ij}\)</span>.</p>
+<h3 id="definition-2">Definition</h3>
+<p>If <span class="math inline">\(A\)</span> and <span
+class="math inline">\(B\)</span> are <span class="math inline">\(n\times
+m\)</span> matrices, the <em>sum</em> <span
+class="math inline">\(A+B\)</span> is the <span
+class="math inline">\(n\times m\)</span> matrix with entries <span
+class="math inline">\(a_{ij}+b_{ij}\)</span>.</p>
+<h3 id="definition-3">Definition</h3>
+<p>If <span class="math inline">\(A\)</span> is <span
+class="math inline">\(n\times m\)</span> and <span
+class="math inline">\(\lambda\)</span> a real number, the <em>scalar
+multiplication</em> <span class="math inline">\(\lambda A\)</span> is
+the <span class="math inline">\(n \times m\)</span> matrix with entries
+<span class="math inline">\(\lambda a_{ij}\)</span>.</p>
+</div>
+<div id="properties" class="slide section level1">
+<h1>Properties</h1>
+<h3 id="theorem">Theorem</h3>
+<p>Let <span class="math inline">\(A,B,C\)</span> be <span
+class="math inline">\(n\times m\)</span> matrices, <span
+class="math inline">\(\lambda,\mu\)</span> real numbers.</p>
+<ol style="list-style-type: lower-alpha">
+<li><span class="math inline">\(A+B=B+A\)</span></li>
+<li><span class="math inline">\((A+B)+C=A+(B+C)\)</span></li>
+<li><span class="math inline">\(A+0=0+A=A\)</span></li>
+<li><span class="math inline">\(A+(-A)=-A+A=0\)</span></li>
+<li><span class="math inline">\(\lambda(A+B)=\lambda A + \lambda
+B\)</span></li>
+<li><span class="math inline">\((\lambda+\mu)A=\lambda A + \mu
+A\)</span></li>
+<li><span class="math inline">\(\lambda(\mu A) = (\lambda \mu)
+A\)</span></li>
+<li><span class="math inline">\(1 A = A\)</span></li>
+</ol>
+</div>
+<div id="matrix-multiplication" class="slide section level1">
+<h1>Matrix Multiplication</h1>
+<h3 id="definition-4">Definition</h3>
+<p>Let <span class="math inline">\(A\)</span> be <span
+class="math inline">\(n\times m\)</span> and <span
+class="math inline">\(B\)</span> be <span class="math inline">\(m\times
+p\)</span>. The <em>matrix product</em> <span
+class="math inline">\(C=AB\)</span> is the <span
+class="math inline">\(n\times p\)</span> matrix with entries <span
+class="math display">\[
+\begin{aligned}
+c_{ij} = \sum_{k=1}^m a_{ik}b_{kj} = a_{i1}b_{1j} +
+a_{i2}b_{2j}+\cdots + a_{im}b_{mj}
+\end{aligned}
+\]</span></p>
+</div>
+<div id="special-matrices" class="slide section level1">
+<h1>Special Matrices</h1>
+<h3 id="definition-5">Definition</h3>
+<ul>
+<li>A <em>square</em> matrix has <span
+class="math inline">\(m=n\)</span></li>
+<li>A <em>diagonal</em> matrix <span
+class="math inline">\(D=[d_{ij}]\)</span> is square with <span
+class="math inline">\(d_{ij}=0\)</span> when <span
+class="math inline">\(i\ne j\)</span></li>
+<li>The <em>identity matrix of order <span
+class="math inline">\(n\)</span></em>, <span
+class="math inline">\(I_n=[\delta_{ij}]\)</span>, is diagonal with <span
+class="math display">\[
+\begin{aligned}
+\delta_{ij} =
+\begin{cases}
+1, &amp; \text{if } i = j, \\
+0, &amp; \text{if } i \ne j.
+\end{cases}
+\end{aligned}
+\]</span></li>
+</ul>
+<h3 id="definition-6">Definition</h3>
+<ul>
+<li>An <em>upper-triangular</em> <span class="math inline">\(n\times
+n\)</span> matrix <span class="math inline">\(U=[u_{ij}]\)</span> has
+<span class="math display">\[
+\begin{aligned}
+u_{ij} = 0,\qquad \text{if } i=j+1,\ldots, n.
+\end{aligned}
+\]</span></li>
+<li>A <em>lower-triangular</em> <span class="math inline">\(n\times
+n\)</span> matrix <span class="math inline">\(L=[l_{ij}]\)</span> has
+<span class="math display">\[
+\begin{aligned}
+l_{ij} = 0,\qquad \text{if } i=1,\ldots,j-1.
+\end{aligned}
+\]</span></li>
+</ul>
+</div>
+<div id="properties-1" class="slide section level1">
+<h1>Properties</h1>
+<h3 id="theorem-1">Theorem</h3>
+<p>Let <span class="math inline">\(A\)</span> be <span
+class="math inline">\(n\times m\)</span>, <span
+class="math inline">\(B\)</span> be <span class="math inline">\(m\times
+k\)</span>, <span class="math inline">\(C\)</span> be <span
+class="math inline">\(k\times p\)</span>, <span
+class="math inline">\(D\)</span> be <span class="math inline">\(m\times
+k\)</span>, and <span class="math inline">\(\lambda\)</span> a real
+number.</p>
+<ol style="list-style-type: lower-alpha">
+<li><span class="math inline">\(A(BC)=(AB)C\)</span></li>
+<li><span class="math inline">\(A(B+D)=AB+AD\)</span></li>
+<li><span class="math inline">\(I_mB=B\)</span> and <span
+class="math inline">\(BI_k=B\)</span></li>
+<li><span class="math inline">\(\lambda(AB)=(\lambda A)B = A(\lambda
+B)\)</span></li>
+</ol>
+</div>
+<div id="matrix-inversion" class="slide section level1">
+<h1>Matrix Inversion</h1>
+<h3 id="definition-7">Definition</h3>
+<ul>
+<li>An <span class="math inline">\(n\times n\)</span> matrix <span
+class="math inline">\(A\)</span> is <em>nonsingular</em> or
+<em>invertible</em> if <span class="math inline">\(n\times n\)</span>
+<span class="math inline">\(A^{-1}\)</span> exists with <span
+class="math inline">\(AA^{-1}=A^{-1}A=I\)</span></li>
+<li>The matrix <span class="math inline">\(A^{-1}\)</span> is called the
+<em>inverse</em> of <span class="math inline">\(A\)</span></li>
+<li>A matrix without an inverse is called <em>singular</em> or
+<em>noninvertible</em></li>
+</ul>
+<h3 id="theorem-2">Theorem</h3>
+<p>For any nonsingular <span class="math inline">\(n\times n\)</span>
+matrix <span class="math inline">\(A\)</span>,</p>
+<ol style="list-style-type: lower-alpha">
+<li><span class="math inline">\(A^{-1}\)</span> is unique</li>
+<li><span class="math inline">\(A^{-1}\)</span> is nonsingular and <span
+class="math inline">\((A^{-1})^{-1}=A\)</span></li>
+<li>If <span class="math inline">\(B\)</span> is nonsingular <span
+class="math inline">\(n\times n\)</span>, then <span
+class="math inline">\((AB)^{-1}=B^{-1}A^{-1}\)</span></li>
+</ol>
+</div>
+<div id="matrix-transpose" class="slide section level1">
+<h1>Matrix Transpose</h1>
+<h3 id="definition-8">Definition</h3>
+<ul>
+<li>The <em>transpose</em> of <span class="math inline">\(n\times
+m\)</span> <span class="math inline">\(A=[a_{ij}]\)</span> is <span
+class="math inline">\(m\times n\)</span> <span
+class="math inline">\(A^t=[a_{ji}]\)</span></li>
+<li>A square matrix <span class="math inline">\(A\)</span> is called
+<em>symmetric</em> if <span class="math inline">\(A=A^t\)</span></li>
+</ul>
+<h3 id="theorem-3">Theorem</h3>
+<ol style="list-style-type: lower-alpha">
+<li><span class="math inline">\((A^t)^t = A\)</span></li>
+<li><span class="math inline">\((A+B)^t = A^t + B^t\)</span></li>
+<li><span class="math inline">\((AB)^t=B^t A^t\)</span></li>
+<li>if <span class="math inline">\(A^{-1}\)</span> exists, then <span
+class="math inline">\((A^{-1})^t = (A^t)^{-1}\)</span></li>
+</ol>
+</div>
+<div id="determinants" class="slide section level1">
+<h1>Determinants</h1>
+<h3 id="definition-9">Definition</h3>
+<ol style="list-style-type: lower-alpha">
+<li>If <span class="math inline">\(A=[a]\)</span> is a <span
+class="math inline">\(1\times 1\)</span> matrix, then <span
+class="math inline">\(\det A=a\)</span></li>
+<li>If <span class="math inline">\(A\)</span> is <span
+class="math inline">\(n\times n\)</span>, the <em>minor</em> <span
+class="math inline">\(M_{ij}\)</span> is the determinant of the <span
+class="math inline">\((n-1)\times (n-1)\)</span> submatrix deleting row
+<span class="math inline">\(i\)</span> and column <span
+class="math inline">\(j\)</span> of <span
+class="math inline">\(A\)</span></li>
+<li>The <em>cofactor</em> <span class="math inline">\(A_{ij}\)</span>
+associated with <span class="math inline">\(M_{ij}\)</span> is <span
+class="math inline">\(A_{ij}=(-1)^{i+j}M_{ij}\)</span></li>
+<li>The <em>determinant</em> of <span class="math inline">\(n\times
+n\)</span> matrix <span class="math inline">\(A\)</span> for <span
+class="math inline">\(n&gt;1\)</span> is <span class="math display">\[
+\begin{aligned}
+\det A = \sum_{j=1}^n a_{ij} A_{ij}
+=\sum_{j=1}^n (-1)^{i+j} a_{ij}M_{ij}
+\end{aligned}
+\]</span> or <span class="math display">\[
+\begin{aligned}
+\det A = \sum_{i=1}^n a_{ij} A_{ij}
+=\sum_{i=1}^n (-1)^{i+j} a_{ij}M_{ij}
+\end{aligned}
+\]</span></li>
+</ol>
+</div>
+<div id="properties-2" class="slide section level1">
+<h1>Properties</h1>
+<h3 id="theorem-4">Theorem</h3>
+<ol style="list-style-type: lower-alpha">
+<li>If any row or column of <span class="math inline">\(A\)</span> has
+all zeros, then <span class="math inline">\(\det A=0\)</span></li>
+<li>If <span class="math inline">\(A\)</span> has two rows or two
+columns equal, then <span class="math inline">\(\det A=0\)</span></li>
+<li>If <span class="math inline">\(\tilde{A}\)</span> comes from <span
+class="math inline">\((E_i)\leftrightarrow(E_j)\)</span> on <span
+class="math inline">\(A\)</span>, then <span class="math inline">\(\det
+\tilde{A}=-\det A\)</span></li>
+<li>If <span class="math inline">\(\tilde{A}\)</span> comes from <span
+class="math inline">\((\lambda E_i)\leftrightarrow(E_i)\)</span> on
+<span class="math inline">\(A\)</span>, then <span
+class="math inline">\(\det \tilde{A}=\lambda \det A\)</span></li>
+<li>If <span class="math inline">\(\tilde{A}\)</span> comes from <span
+class="math inline">\((E_i+\lambda E_j)\leftrightarrow(E_i)\)</span> on
+<span class="math inline">\(A\)</span>, with <span
+class="math inline">\(i\ne j\)</span>, then <span
+class="math inline">\(\det \tilde{A}=\det A\)</span></li>
+<li>If <span class="math inline">\(B\)</span> is also <span
+class="math inline">\(n\times n\)</span>, then <span
+class="math inline">\(\det AB=\det A \det B\)</span></li>
+<li><span class="math inline">\(\det A^t = \det A\)</span></li>
+<li>When <span class="math inline">\(A^{-1}\)</span> exists, <span
+class="math inline">\(\det A^{-1} = (\det A)^{-1}\)</span></li>
+<li>If <span class="math inline">\(A\)</span> is upper/lower triangular
+or diagonal, then <span class="math inline">\(\det A = \prod_{i=1}^n
+a_{ii}\)</span></li>
+</ol>
+</div>
+<div id="linear-systems-and-determinants" class="slide section level1">
+<h1>Linear Systems and Determinants</h1>
+<h3 id="theorem-5">Theorem</h3>
+<p>The following statements are equivalent for any <span
+class="math inline">\(n\times n\)</span> matrix <span
+class="math inline">\(A\)</span>:</p>
+<ol style="list-style-type: lower-alpha">
+<li>The equation <span
+class="math inline">\(A\mathbf{x}=\mathbf{0}\)</span> has the unique
+solution <span class="math inline">\(\mathbf{x}=\mathbf{0}\)</span></li>
+<li>The system <span
+class="math inline">\(A\mathbf{x}=\mathbf{b}\)</span> has a unique
+solution for any <span class="math inline">\(\mathbf{b}\)</span></li>
+<li>The matrix <span class="math inline">\(A\)</span> is nonsingular;
+that is, <span class="math inline">\(A^{-1}\)</span> exists</li>
+<li><span class="math inline">\(\det A\ne 0\)</span></li>
+<li>Gaussian elimination with row interchanges can be performed on the
+system <span class="math inline">\(A\mathbf{x}=\mathbf{b}\)</span> for
+any <span class="math inline">\(\mathbf{b}\)</span></li>
+</ol>
+</div>
+<div id="lu-factorization" class="slide section level1">
+<h1>LU Factorization</h1>
+<h3 id="section-5"></h3>
+<p>The <em><span class="math inline">\(k\)</span>th Gaussian
+transformation matrix</em> is defined by <span class="math display">\[
+\begin{aligned}
+M^{(k)} =
+\begin{bmatrix}
+1 &amp; 0 &amp;    &amp;  \cdots &amp;   &amp; \cdots  &amp; &amp; 0 \\
+0 &amp; \ddots &amp;  \ddots &amp;   &amp;   &amp; &amp; &amp; \vdots \\
+\vdots &amp; \ddots &amp; \ddots &amp; \ddots &amp; &amp; &amp; &amp;
+\vdots \\
+\vdots &amp;        &amp;  0   &amp; \ddots &amp; \ddots &amp; &amp;
+&amp; \vdots \\
+\vdots &amp;        &amp;  \vdots  &amp;  -m_{k+1,k} &amp; \ddots &amp;
+\ddots &amp; &amp; \vdots \\
+\vdots &amp;        &amp;  \vdots  &amp;  \vdots &amp; 0 &amp; \ddots
+&amp; &amp; \vdots \\
+\vdots &amp;        &amp;  \vdots  &amp;  \vdots &amp; \vdots &amp;
+\ddots &amp; \ddots &amp; 0\\
+0  &amp;  \cdots      &amp;  0  &amp;  -m_{n,k} &amp; 0 &amp; \cdots
+&amp; 0 &amp; 1\\
+\end{bmatrix}
+\end{aligned}
+\]</span></p>
+</div>
+<div id="lu-factorization-1" class="slide section level1">
+<h1>LU Factorization</h1>
+<h3 id="section-6"></h3>
+<p>Gaussian elimination can be written as <span class="math display">\[
+\begin{aligned}
+A^{(n)} = M^{(n-1)}\cdots M^{(1)}A =
+\begin{bmatrix}
+a_{11}^{(1)} &amp; a_{12}^{(1)} &amp; \cdots &amp; a_{1n}^{(1)} \\
+0 &amp; a_{22}^{(2)} &amp; \ddots &amp; \vdots \\
+\vdots &amp; \ddots &amp; \ddots &amp; a_{n-1,n}^{(n-1)} \\
+0 &amp; \cdots &amp; 0  &amp; a_{nn}^{(n)}
+\end{bmatrix}
+\end{aligned}
+\]</span></p>
+</div>
+<div id="lu-factorization-2" class="slide section level1">
+<h1>LU Factorization</h1>
+<h3 id="section-7"></h3>
+<p>Reversing the elimination steps gives the inverses: <span
+class="math display">\[
+\begin{aligned}
+L^{(k)} = [M^{(k)}]^{-1} =
+\begin{bmatrix}
+1 &amp; 0 &amp;    &amp;  \cdots &amp;   &amp; \cdots  &amp; &amp; 0 \\
+0 &amp; \ddots &amp;  \ddots &amp;   &amp;   &amp; &amp; &amp; \vdots \\
+\vdots &amp; \ddots &amp; \ddots &amp; \ddots &amp; &amp; &amp; &amp;
+\vdots \\
+\vdots &amp;        &amp;  0   &amp; \ddots &amp; \ddots &amp; &amp;
+&amp; \vdots \\
+\vdots &amp;        &amp;  \vdots  &amp;  m_{k+1,k} &amp; \ddots &amp;
+\ddots &amp; &amp; \vdots \\
+\vdots &amp;        &amp;  \vdots  &amp;  \vdots &amp; 0 &amp; \ddots
+&amp; &amp; \vdots \\
+\vdots &amp;        &amp;  \vdots  &amp;  \vdots &amp; \vdots &amp;
+\ddots &amp; \ddots &amp; 0\\
+0  &amp;  \cdots      &amp;  0  &amp;  m_{n,k} &amp; 0 &amp; \cdots
+&amp; 0 &amp; 1\\
+\end{bmatrix}
+\end{aligned}
+\]</span> and we have <span class="math display">\[
+\begin{aligned}
+LU&amp;=L^{(1)}\cdots L^{(n-1)}\cdots M^{(n-1)}\cdots M^{(1)} A \\
+  &amp;= [M^{(1)}]^{-1}\cdots [M^{(n-1)}]^{-1}\cdots M^{(n-1)}
+\cdots M^{(1)} A = A
+\end{aligned}
+\]</span></p>
+</div>
+<div id="lu-factorization-3" class="slide section level1">
+<h1>LU Factorization</h1>
+<h3 id="theorem-6">Theorem</h3>
+<p>If Gaussian elimination can be performed on the linear system <span
+class="math inline">\(A\mathbf{x}=\mathbf{b}\)</span> without row
+interchanges, <span class="math inline">\(A\)</span> can be factored
+into the product of lower-triangular <span
+class="math inline">\(L\)</span> and upper-triangular <span
+class="math inline">\(U\)</span> as <span
+class="math inline">\(A=LU\)</span>, where <span
+class="math inline">\(m_{ji}=a_{ji}^{(i)}/a_{ii}^{(i)}\)</span>: <span
+class="math display">\[
+\begin{aligned}
+U=
+\begin{bmatrix}
+a_{11}^{(1)} &amp; a_{12}^{(1)} &amp; \cdots &amp; a_{1n}^{(1)} \\
+0 &amp; a_{22}^{(2)} &amp; \ddots &amp; \vdots \\
+\vdots &amp; \ddots &amp; \ddots &amp; a_{n-1,n}^{(n-1)} \\
+0 &amp; \cdots &amp; 0  &amp; a_{nn}^{(n)}
+\end{bmatrix},\ L=
+\begin{bmatrix}
+1 &amp; 0 &amp; \cdots &amp; 0 \\
+m_{21} &amp; 1 &amp; \ddots &amp; \vdots \\
+\vdots &amp; \ddots &amp; \ddots &amp; 0 \\
+m_{n1} &amp; \cdots &amp; m_{n,n-1} &amp; 1
+\end{bmatrix}
+\end{aligned}
+\]</span></p>
+</div>
+<div id="permutation-matrices" class="slide section level1">
+<h1>Permutation Matrices</h1>
+<h3 id="section-8"></h3>
+<p>Suppose <span class="math inline">\(k_1,\ldots,k_n\)</span> is a
+permutation of <span class="math inline">\(1,\ldots,n\)</span>. The
+permutation matrix <span class="math inline">\(P=(p_{ij})\)</span> is
+defined by <span class="math display">\[
+\begin{aligned}
+p_{ij} =
+\begin{cases}
+1, &amp; \text{if } j=k_i,\\
+0, &amp; \text{otherwise.}
+\end{cases}
+\end{aligned}
+\]</span></p>
+<ol style="list-style-type: lower-roman">
+<li><span class="math inline">\(PA\)</span> permutes the rows of <span
+class="math inline">\(A\)</span>: <span class="math display">\[
+\begin{aligned}
+PA =
+\begin{bmatrix}
+a_{k_11} &amp; \cdots &amp; a_{k_1n} \\
+\vdots &amp; \ddots &amp; \vdots \\
+a_{k_n1} &amp; \cdots &amp; a_{k_nn}
+\end{bmatrix}
+\end{aligned}
+\]</span></li>
+<li><span class="math inline">\(P^{-1}\)</span> exists and <span
+class="math inline">\(P^{-1}=P^t\)</span></li>
+</ol>
+<p>Gaussian elimination with row interchanges then becomes: <span
+class="math display">\[
+\begin{aligned}
+A=P^{-1}LU = (P^t L ) U
+\end{aligned}
+\]</span></p>
+</div>
+<div id="diagonally-dominant-matrices" class="slide section level1">
+<h1>Diagonally Dominant Matrices</h1>
+<h3 id="definition-10">Definition</h3>
+<p>The <span class="math inline">\(n\times n\)</span> matrix <span
+class="math inline">\(A\)</span> is said to be <em>strictly diagonally
+dominant</em> when <span class="math display">\[
+\begin{aligned}
+|a_{ii}|&gt;\sum_{j\ne i} |a_{ij}|
+\end{aligned}
+\]</span></p>
+<h3 id="theorem-7">Theorem</h3>
+<p>A strictly diagonally dominant matrix <span
+class="math inline">\(A\)</span> is nonsingular, Gaussian elimination
+can be performed on <span
+class="math inline">\(A\mathbf{x}=\mathbf{b}\)</span> without row
+interchanges, and the computations will be stable.</p>
+</div>
+<div id="positive-definite-matrices" class="slide section level1">
+<h1>Positive Definite Matrices</h1>
+<h3 id="definition-11">Definition</h3>
+<p>A matrix <span class="math inline">\(A\)</span> is <em>positive
+definite</em> if it is symmetric and if <span
+class="math inline">\(\mathbf{x}^t A \mathbf{x} &gt; 0\)</span> for
+every <span class="math inline">\(\mathbf{x}\ne \mathbf{0}\)</span>.</p>
+<h3 id="theorem-8">Theorem</h3>
+<p>If <span class="math inline">\(A\)</span> is an <span
+class="math inline">\(n\times n\)</span> positive definite matrix,
+then</p>
+<ol style="list-style-type: lower-alpha">
+<li><span class="math inline">\(A\)</span> has an inverse</li>
+<li><span class="math inline">\(a_{ii}&gt;0\)</span></li>
+<li><span class="math inline">\(\max_{1\le k,j\le n} |a_{kj}| \le
+\max_{1\le i \le n} |a_{ii}|\)</span></li>
+<li><span class="math inline">\((a_{ij})^2&lt;a_{ii}a_{jj}\)</span> for
+<span class="math inline">\(i\ne j\)</span></li>
+</ol>
+</div>
+<div id="principal-submatrices" class="slide section level1">
+<h1>Principal Submatrices</h1>
+<h3 id="definition-12">Definition</h3>
+<p>A <em>leading principal submatrix</em> of a matrix <span
+class="math inline">\(A\)</span> is a matrix of the form <span
+class="math display">\[
+\begin{aligned}
+A_k = \begin{bmatrix}
+a_{11} &amp; a_{12} &amp; \cdots &amp; a_{1k} \\
+a_{21} &amp; a_{22} &amp; \cdots &amp; a_{2k} \\
+\vdots &amp; \vdots &amp;        &amp; \vdots \\
+a_{k1} &amp; a_{k2} &amp; \cdots &amp; a_{kk}
+\end{bmatrix}
+\end{aligned}
+\]</span> for some <span class="math inline">\(1\le k \le
+n\)</span>.</p>
+<h3 id="theorem-9">Theorem</h3>
+<p>A symmetric matrix <span class="math inline">\(A\)</span> is positive
+definite if and only if each of its leading principal submatrices has a
+positive determinant.</p>
+</div>
+<div id="spd-and-gaussian-elimination" class="slide section level1">
+<h1>SPD and Gaussian Elimination</h1>
+<h3 id="theorem-10">Theorem</h3>
+<p>The symmetric matrix <span class="math inline">\(A\)</span> is
+positive definite if and only if Gaussian elimination without row
+interchanges can be done on <span
+class="math inline">\(A\mathbf{x}=\mathbf{b}\)</span> with all pivot
+elements positive, and the computations are then stable.</p>
+<h3 id="corollary">Corollary</h3>
+<p>The matrix <span class="math inline">\(A\)</span> is positive
+definite if and only if it can be factored <span
+class="math inline">\(A=LDL^t\)</span> where <span
+class="math inline">\(L\)</span> is lower triangular with <span
+class="math inline">\(1\)</span>â€™s on its diagonal and <span
+class="math inline">\(D\)</span> is diagonal with positive diagonal
+entries.</p>
+<h3 id="corollary-1">Corollary</h3>
+<p>The matrix <span class="math inline">\(A\)</span> is positive
+definite if and only if it can be factored <span
+class="math inline">\(A=LL^t\)</span>, where <span
+class="math inline">\(L\)</span> is lower triangular with nonzero
+diagonal entries.</p>
+</div>
+<div id="band-matrices" class="slide section level1">
+<h1>Band Matrices</h1>
+<h3 id="definition-13">Definition</h3>
+<p>An <span class="math inline">\(n\times n\)</span> matrix is called a
+<em>band matrix</em> if <span class="math inline">\(p,q\)</span> exist
+with <span class="math inline">\(1&lt;p,q&lt;n\)</span> and <span
+class="math inline">\(a_{ij}=0\)</span> when <span
+class="math inline">\(p\le j-i\)</span> or <span
+class="math inline">\(q\le i-j\)</span>. The <em>bandwidth</em> is <span
+class="math inline">\(w=p+q-1\)</span>.</p>
+<h3 id="section-9"></h3>
+<p>A <em>tridiagonal</em> matrix has <span
+class="math inline">\(p=q=2\)</span> and bandwidth <span
+class="math inline">\(3\)</span>.</p>
+<h3 id="theorem-11">Theorem</h3>
+<p>Suppose <span class="math inline">\(A=[a_{ij}]\)</span> is
+tridiagonal with <span class="math inline">\(a_{i,i-1}a_{i,i+1}\ne
+0\)</span>. If <span
+class="math inline">\(|a_{11}|&gt;|a_{12}|\)</span>, <span
+class="math inline">\(|a_{ii}|\ge |a_{i,i-1}|+|a_{i,i+1}|\)</span>, and
+<span class="math inline">\(|a_{nn}|&gt;|a_{n,n-1}|\)</span>, then <span
+class="math inline">\(A\)</span> is nonsingular.</p>
+</div>
+</body>
+</html>
+
